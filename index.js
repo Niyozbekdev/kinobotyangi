@@ -1,39 +1,38 @@
 require("dotenv").config();
 const { Telegraf, Markup, session } = require("telegraf");
-const ulanishDb = require('./db')
+const ulanishDb = require('./db');
+const bot = new Telegraf(process.env.BOT_TOKEN);
+const { startCommand, handleStart, boshMenyu } = require('./commands/startCommand')
 const User = require('./models/User')
 const Kino = require('./models/Kino')
 const AdminState = require('./models/AdminState');
+const onKinoTopishClick = require('./handlers/onKinoTopishClick');
+const kinoTopish = require("./commands/kinoTopish");
 
-const bot = new Telegraf(process.env.BOT_TOKEN);
 bot.use(session())
 ulanishDb()
 
 const admin = 6730238086;
 
-bot.start(async (stx) => {
-    const { id, username, first_name } = stx.from;
+//Bu start komandasini foallashtiradi
+startCommand(bot);
 
-    //Foydalanuvchini bazaga saqlash yoki mavjud bulsa o'zgartirish
-    const tekshirishUser = await User.findOne({ user_id: id });
-    if (tekshirishUser) {
-        tekshirishUser.status = 'active';
-        await tekshirishUser.save();
-        stx.reply('Yana qaytingiz ' + stx.chat.first_name);
-    } else {
-        const newUser = new User({
-            user_id: id,
-            username,
-            first_name
-        });
-        await newUser.save();
+bot.command('start', async (ctx) => {
+    await handleStart(ctx);
+});
 
-        stx.reply(`Assalomu alaykum, ${first_name}! hush kelibsiz`,
-            Markup.keyboard([
-                ['🎬 Kino topish', '📞 Bog‘lanish'],
-                ['🛠 Admin bo‘limi']
-            ]).resize()
-        )
+//Tugma boshilganda kino kodni kiriting deb javob berish
+bot.hears('🎬 Kino topish', onKinoTopishClick);
+
+//Kod yuborilganda izlash
+bot.on('text', kinoTopish);
+
+//Bu foydalanuvhi video tagidagi X ni bosganda video uchib ketadi
+bot.action('delete_msg', async (ctx) => {
+    try {
+        await ctx.deleteMessage();
+    } catch (err) {
+        console.error('Xabarni uchrishda xatolik' + err)
     }
 })
 
@@ -52,6 +51,19 @@ bot.hears('🛠 Admin bo‘limi', async (ctx) => {
         ]).resize()
     );
 });
+
+
+//Orqaga bosganda bosh saxifaga yo'naltiradi
+bot.hears('⬅️ Orqaga', async (ctx) => {
+    await ctx.reply(
+        '🏠 Asosiy menyuga qaytdingiz:',
+        Markup.keyboard([
+            ['🎬 Kino topish', '📞 Bog‘lanish'],
+            ['🛠 Admin bo‘limi']
+        ]).resize()
+    );
+});
+
 
 
 // Kino qo‘shish tugmasi bosilganda
@@ -87,7 +99,7 @@ bot.on('video', async (ctx) => {
 
     const state = await AdminState.findOne({ admin_id: userId });
 
-    if (!state || state.step !== 'waiting_for_video') return;
+    if (!state || state.step !== 'waiting_for_video') return ctx.reply('Iltimos video yuboring');
 
     const kino = ctx.message?.video ||
         ctx.message?.reply_to_message?.video ||
@@ -147,11 +159,13 @@ bot.on('text', async (ctx) => {
         //Bu admin video yuklab bulgandan so'ng AdminStateni tozalaydi bazadan
         await AdminState.deleteOne({ admin_id: userId });
 
-        return ctx.reply(`✅ Kino saqlandi:\n🎬 *${state.temp_title}*\n🆔 Kod: *${code}*`, {
+        return ctx.reply(`✅ Kino saqlandi:\n🎬 Kino *${state.temp_title}*\n🆔 Kod: *${code}*`, {
             parse_mode: 'Markdown'
         });
     }
 });
+
+
 
 
 bot.launch();
@@ -207,6 +221,31 @@ bot.launch();
 
 
 
+// bot.start(async (stx) => {
+//     const { id, username, first_name } = stx.from;
+
+//     //Foydalanuvchini bazaga saqlash yoki mavjud bulsa o'zgartirish
+//     const tekshirishUser = await User.findOne({ user_id: id });
+//     if (tekshirishUser) {
+//         tekshirishUser.status = 'active';
+//         await tekshirishUser.save();
+//         stx.reply('Yana qaytingiz ' + stx.chat.first_name);
+//     } else {
+//         const newUser = new User({
+//             user_id: id,
+//             username,
+//             first_name
+//         });
+//         await newUser.save();
+
+//         stx.reply(`Assalomu alaykum, ${first_name}! hush kelibsiz`,
+//             Markup.keyboard([
+//                 ['🎬 Kino topish', '📞 Bog‘lanish'],
+//                 ['🛠 Admin bo‘limi']
+//             ]).resize()
+//         )
+//     }
+// })
 
 
 
