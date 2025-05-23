@@ -5,7 +5,14 @@ const userSchema = new mongoose.Schema({
     username: String,
     first_name: String,
     status: { type: String, default: 'active' },
-    join: { type: Date, default: Date.now }
+    phone_number: String,
+    referrer_id: Number,
+    is_admin: { type: Boolean, default: false },
+    step: { type: String, required: true },
+    prev_step: String,
+    is_blocked: { type: Boolean, default: false },
+    join: { type: Date, default: Date.now },
+    last_active_at: { type: Date, default: Date.now }
 });
 
 module.exports = mongoose.model('User', userSchema);

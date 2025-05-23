@@ -21,6 +21,18 @@ bot.command('start', async (ctx) => {
     await handleStart(ctx);
 });
 
+// bot.on('contact', async (ctx) => {
+//     const userId = ctx.from.id;
+//     const phone = ctx.message.contact.phone_number;
+
+//     await User.findOneAndUpdate(
+//         { user_id: userId },
+//         { phone_number: phone, last_active_at: new Date() }
+//     );
+
+//     ctx.reply("✅ Raqamingiz saqlandi.", boshMenyu());
+// });
+
 //Tugma boshilganda kino kodni kiriting deb javob berish
 bot.hears('🎬 Kino topish', onKinoTopishClick);
 
@@ -35,6 +47,7 @@ bot.action('delete_msg', async (ctx) => {
         console.error('Xabarni uchrishda xatolik' + err)
     }
 })
+
 
 bot.hears('🛠 Admin bo‘limi', async (ctx) => {
     const userId = ctx.from.id;
@@ -79,7 +92,7 @@ bot.hears('🎥 Kino qo‘shish', async (ctx) => {
         );
 
         await ctx.reply("🎬 Yuklamoqchi bulgan videoni yuboring", {
-            parse_mode: "Markdown"
+            parse_mode: "Html"
         });
 
 
@@ -164,6 +177,8 @@ bot.on('text', async (ctx) => {
         });
     }
 });
+
+
 
 
 

@@ -7,7 +7,7 @@ const AdminStateSchema = new mongoose.Schema({
     updated_at: { type: Date, default: Date.now },
     temp_file_id: { type: String, default: null },
     temp_title: { type: String, default: null },
-    upsert: Boolean
+    upsert: { type: Boolean, default: false },
 });
 
 module.exports = mongoose.model('AdminState', AdminStateSchema);

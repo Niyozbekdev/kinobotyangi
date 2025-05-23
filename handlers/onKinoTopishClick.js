@@ -1,7 +1,14 @@
+const User = require('../models/User');
+
 //Kino topish bosilganda ishlaydi
 const onKinoTopishClick = async (ctx) => {
-    ctx.session = ctx.session || {};
-    ctx.session.step = 'kodni_kiritish';
+    const userId = ctx.from.id
+
+    await User.findOneAndUpdate(
+        { user_id: userId },
+        { step: "waiting_for_codd", updated_at: new Date() },
+        { upsert: true }
+    );
     await ctx.reply("🎬 Kino kodini kiriting:");
 };
 
