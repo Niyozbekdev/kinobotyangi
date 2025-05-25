@@ -10,21 +10,16 @@ const userText = async (ctx) => {
     const userId = ctx.from.id;
     const user = await User.findOne({ user_id: userId });
 
-    if (!user.phone_number) {
-        return ctx.reply("📲 Avval raqamingizni yuboring", {
+    if (!user || !user.phone_number) {
+        return ctx.reply("❗️ Avval raqamingizni yuboring", {
             reply_markup: {
                 keyboard: [
-                    [
-                        {
-                            text: "📲 Raqamni yuborish",
-                            request_contact: true
-                        }
-                    ]
+                    [{ text: "📲 Raqamni yuborish", request_contact: true }]
                 ],
                 resize_keyboard: true,
                 one_time_keyboard: true
             }
-        })
+        });
     }
 
     if (user && user.step === "waiting_for_codd") {

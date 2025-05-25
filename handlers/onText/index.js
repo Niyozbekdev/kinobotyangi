@@ -6,13 +6,13 @@ const userContact = require('./userContact');
 const onText = async (ctx) => {
     const msg = ctx.message;
     if (!msg) return;
-
     const userId = ctx.from.id;
-    // AdminState borligini tekshiramiz (step-based boshqaruv uchun)
-    const state = await AdminState.findOne({ admin_id: userId });
+
     if (msg.contact) {
         return await userContact(ctx)
     }
+    // AdminState borligini tekshiramiz (step-based boshqaruv uchun)
+    const state = await AdminState.findOne({ admin_id: userId });
     // === Admin xabarlari (step orqali)
     if (state && state.step) {
         return await adminText(ctx); // video, title, code...

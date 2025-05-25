@@ -9,10 +9,10 @@ const handleStart = async (ctx) => {
     try {
         const userId = ctx.from.id;
         const referrerId = ctx.startPayload; //Referal kodi
-        const { id, username, first_name, referrer_id, last_active_at } = ctx.from;
+        const { id, username, first_name, last_active_at } = ctx.from;
 
         //Foydalanuvchini bazaga saqlash yoki mavjud bulsa o'zgartirish
-        const tekshirishUser = await User.findOne({ user_id: id });
+        const tekshirishUser = await User.findOne({ user_id: userId });
         if (tekshirishUser) {
             tekshirishUser.status = 'active';
             tekshirishUser.is_blocked = false; //Bu foydalanuvchini blockdan chiqdi deb hisoblaydi
@@ -47,7 +47,7 @@ const handleStart = async (ctx) => {
             });
             await newUser.save();
 
-            ctx.reply(`Assalomu alaykum, ${first_name}! Hush kelibsiz 👋`, {
+            return ctx.reply(`Assalomu alaykum, ${first_name}! Hush kelibsiz 👋`, {
                 reply_markup: {
                     keyboard: [
                         [
@@ -61,13 +61,6 @@ const handleStart = async (ctx) => {
                     one_time_keyboard: true
                 }
             });
-
-            ctx.reply(`Assalomu alaykum, ${first_name}! hush kelibsiz`,
-                Markup.keyboard([
-                    ['🎬 Kino topish', '📞 Bog‘lanish'],
-                    ['🛠 Admin bo‘limi']
-                ]).resize()
-            )
         }
     } catch (error) {
         if (error.code === 403)

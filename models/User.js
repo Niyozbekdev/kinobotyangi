@@ -5,7 +5,7 @@ const userSchema = new mongoose.Schema({
     username: String,
     first_name: String,
     status: { type: String, default: 'active' },
-    phone_number: String,
+    phone_number: { type: String, default: null },
     referrer_id: Number,
     is_admin: { type: Boolean, default: false },
     // step: { type: String, required: true },
