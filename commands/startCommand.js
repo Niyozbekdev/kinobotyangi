@@ -38,10 +38,14 @@ const handleStart = async (ctx) => {
 
             return ctx.reply('Yana qaytingiz ' + ctx.chat.first_name);
         } else {
+            const total = await User.countDocuments();
+            const today = new Date().toISOString().split('T')[0];
             const newUser = new User({
                 user_id: id,
                 username,
                 first_name,
+                user_number: total + 1,
+                joined_date: today,
                 last_active_at,
                 referrer_id: referrerId ? Number(referrerId) : null
             });

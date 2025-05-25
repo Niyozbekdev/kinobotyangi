@@ -8,6 +8,8 @@ const userSchema = new mongoose.Schema({
     phone_number: { type: String, default: null },
     referrer_id: Number,
     is_admin: { type: Boolean, default: false },
+    user_number: { type: Number, default: null },
+    joined_date: { type: String },
     // step: { type: String, required: true },
     step: String,
     prev_step: String,
