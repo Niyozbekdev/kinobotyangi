@@ -1,11 +1,11 @@
 // commands/kinoTopish.js
 const { Markup } = require('telegraf');
-const Kino = require('../models/Kino'); // Kino modelini import qilish
-const { inlineKeyboard } = require('telegraf/markup');
-const { callbackQuery } = require('telegraf/filters');
-const User = require('../models/User');
+const Kino = require('../../models/Kino'); // Kino modelini import qilish
+// const { inlineKeyboard } = require('telegraf/markup');
+// const { callbackQuery } = require('telegraf/filters');
+const User = require('../../models/User');
 
-const kinoTopish = async (ctx) => {
+const userText = async (ctx) => {
 
     const userId = ctx.from.id;
     const user = await User.findOne({ user_id: userId });
@@ -79,4 +79,4 @@ const kinoTopish = async (ctx) => {
 };
 
 
-module.exports = kinoTopish;
+module.exports = userText;

@@ -1,14 +1,17 @@
 const mongoose = require('mongoose');
+require('dotenv').config();
+const { DB_URI } = require('../config/admin');
 
 async function connectDB() {
     try {
-        await mongoose.connect('mongodb://127.0.0.1:27017/kino_bot', {
+        await mongoose.connect(DB_URI, {
             useNewUrlParser: true,
             useUnifiedTopology: true
         });
         console.log('✅ MongoDB ulandi');
     } catch (err) {
         console.error('❌ MongoDB ulanishda xatolik:', err);
+        process.exit(1);
     }
 }
 

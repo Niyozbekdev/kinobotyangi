@@ -1,4 +1,4 @@
-const User = require('../models/User');
+const User = require('../../models/User');
 
 //Kino topish bosilganda ishlaydi
 const onKinoTopishClick = async (ctx) => {
