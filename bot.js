@@ -7,11 +7,7 @@ const { startCommand, handleStart } = require('./commands/startCommand');
 startCommand(bot);
 
 bot.command('start', async (ctx) => {
-    try {
-        await handleStart(ctx);
-    } catch (err) {
-        console.error("Commanda bot.js", err)
-    }
+    await handleStart(ctx);
 });
 
 const userContact = require('./handlers/onText/userContact')
