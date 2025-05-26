@@ -18,13 +18,11 @@ const userContact = async (ctx) => {
                 { new: true }
             );
 
-            return ctx.reply("✅ Raqamingiz saqlandi.", boshMenyu());
+            return ctx.reply("✅ Foydalanishingiz mumkin.", boshMenyu());
         }
-    } catch (error) {
-        console.log(error)
+    } catch (err) {
+        console.error("UserContextda", err)
     }
-
-
 };
 
 module.exports = userContact;

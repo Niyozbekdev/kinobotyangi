@@ -10,7 +10,7 @@ const userSchema = new mongoose.Schema({
     is_admin: { type: Boolean, default: false },
     user_number: { type: Number, default: null },
     joined_date: { type: String },
-    // step: { type: String, required: true },
+    step: { type: String, required: null },
     step: String,
     prev_step: String,
     is_blocked: { type: Boolean, default: false },

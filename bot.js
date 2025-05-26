@@ -7,7 +7,11 @@ const { startCommand, handleStart } = require('./commands/startCommand');
 startCommand(bot);
 
 bot.command('start', async (ctx) => {
-    await handleStart(ctx);
+    try {
+        await handleStart(ctx);
+    } catch (err) {
+        console.error("Commanda bot.js", err)
+    }
 });
 
 const userContact = require('./handlers/onText/userContact')
@@ -31,7 +35,11 @@ bot.hears('🎥 Kino qo‘shish', addKinoStart);
 bot.hears('⬅️ Orqaga', orqagaClick);
 
 bot.command('kino', async (ctx) => {
-    await onKinoTopish(ctx);
+    try {
+        await onKinoTopish(ctx);
+    } catch (err) {
+        console.error("Bot jsda error", err)
+    }
 });
 const onText = require('./handlers/onText');
 bot.on('message', onText);

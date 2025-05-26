@@ -1,9 +1,4 @@
-const { Markup } = require('telegraf');
 const User = require('../models/User');
-const boshMenyu = require('../keyboards/mainKeyboard');
-
-
-
 //Start logikasi istalgan joydan chaqrish mumkinn
 const handleStart = async (ctx) => {
     try {
@@ -36,7 +31,7 @@ const handleStart = async (ctx) => {
                 })
             }
 
-            return ctx.reply('Yana qaytingiz ' + ctx.chat.first_name);
+            return ctx.reply(`🏠 Bosh menyuga qaytdingiz: ` + ctx.chat.first_name);
         } else {
             const total = await User.countDocuments();
             const today = new Date().toISOString().split('T')[0];
@@ -51,7 +46,7 @@ const handleStart = async (ctx) => {
             });
             await newUser.save();
 
-            return ctx.reply(`Assalomu alaykum, ${first_name}! Hush kelibsiz 👋`, {
+            return ctx.reply(`👋 Assalomu alaykum, ${first_name}\n ❗️Botdan toliq foydalanish uchun raqamingizni yuboring.`, {
                 reply_markup: {
                     keyboard: [
                         [
@@ -66,14 +61,19 @@ const handleStart = async (ctx) => {
                 }
             });
         }
-    } catch (error) {
+    } catch (err) {
         if (error.code === 403)
-            console.log('Foydalnuvchi botni bloklagan')
+            console.error("HandlerStartda", err)
     }
 
 }
 //Start komandasi bosilganda shu buladi Asosiy menyu
 const startCommand = async (bot) => {
+    try {
+
+    } catch (err) {
+        console.error("Start comandda", err);
+    }
     await bot.start(handleStart); //Start komandasi
 }
 

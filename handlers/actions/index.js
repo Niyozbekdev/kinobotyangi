@@ -1,5 +1,10 @@
 
 module.exports = (bot) => {
+    try {
+
+    } catch (err) {
+        console.error("Action bor joyda", err)
+    }
     const deleteMsg = require('./delereMsg');
 
     bot.action('delete_msg', deleteMsg);
