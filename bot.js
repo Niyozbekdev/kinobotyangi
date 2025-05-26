@@ -1,6 +1,12 @@
 const { Telegraf } = require("telegraf");
 const { BOT_TOKEN } = require('./config/admin');
 const bot = new Telegraf(BOT_TOKEN);
+//Botdagi xatolikni ushlaydi barchasini
+bot.catch((err, ctx) => {
+    console.error("Botda xatolik", err);
+    ctx.reply("Xatolik yuz berdi. Keyinroq urinib ko'ring.")
+});
+
 const { startCommand, handleStart } = require('./commands/startCommand');
 
 //Bu start komandasini foallashtiradi
