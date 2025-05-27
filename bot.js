@@ -4,7 +4,7 @@ const bot = new Telegraf(BOT_TOKEN);
 //Botdagi xatolikni ushlaydi barchasini
 bot.catch((err, ctx) => {
     console.error("Botda xatolik", err);
-    ctx.reply("Xatolik yuz berdi. Keyinroq urinib ko'ring.")
+    ctx.reply("Xatolik yuz berdi.. Keyinroq urinib ko'ring.")
 });
 
 const { startCommand, handleStart } = require('./commands/startCommand');
