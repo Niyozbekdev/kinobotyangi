@@ -15,7 +15,7 @@ const userSchema = new mongoose.Schema({
     prev_step: String,
     is_blocked: { type: Boolean, default: false },
     join: { type: Date, default: Date.now },
-    last_active_at: { type: Date, default: Date.now }
+    last_active_at: { type: String }
 });
 
 module.exports = mongoose.model('User', userSchema);

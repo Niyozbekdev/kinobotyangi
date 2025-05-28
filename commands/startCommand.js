@@ -41,7 +41,7 @@ const handleStart = async (ctx) => {
                 first_name,
                 user_number: total + 1,
                 joined_date: today,
-                last_active_at,
+                last_active_at: today,
                 referrer_id: referrerId ? Number(referrerId) : null
             });
             await newUser.save();

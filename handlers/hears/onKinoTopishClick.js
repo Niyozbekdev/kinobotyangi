@@ -20,11 +20,16 @@ const onKinoTopishClick = async (ctx) => {
         }
 
 
+        //Bu user har safar kino topishni bosganda oxirgi faolik yangilanadi
+        const today = new Date().toISOString().split('T')[0];
+
+
         // Raqam bor, davom etamiz
         await User.findOneAndUpdate(
             { user_id: userId },
             { step: "waiting_for_codd", updated_at: new Date() },
-            { upsert: true }
+            { upsert: true },
+            { last_active_at: today }
         );
         return ctx.reply("🎬 Kino kodini kiriting:");
     } catch (err) {

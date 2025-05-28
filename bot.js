@@ -26,6 +26,8 @@ const onKinoTopish = require('./handlers/hears/onKinoTopishClick');
 // const darajam = require('./handlers/hears/darajam');
 const adminPanel = require('./handlers/admin/adminPanel');
 const addKinoStart = require('./handlers/admin/addKinoStart');
+const deleteKinoStart = require('./handlers/admin/deleteKinoStart')
+const addStatistika = require('./handlers/admin/hisobotStart')
 const orqagaClick = require('./handlers/hears/back');
 
 bot.hears('🎬 Kino topish', onKinoTopish);
@@ -34,6 +36,8 @@ bot.hears('🎬 Kino topish', onKinoTopish);
 // bot.hears('📊 Darajam', darajam);
 bot.hears('🛠 Admin bo‘limi', adminPanel);
 bot.hears('🎥 Kino qo‘shish', addKinoStart);
+bot.hears('🗑 Kino o‘chirish', deleteKinoStart);
+bot.hears('📊 Statistika', addStatistika)
 bot.hears('⬅️ Orqaga', orqagaClick);
 
 bot.command('kino', async (ctx) => {
