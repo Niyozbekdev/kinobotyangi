@@ -17,7 +17,11 @@ bot.command('start', async (ctx) => {
 });
 
 const userContact = require('./handlers/onText/userContact')
-bot.on('contact', userContact)
+bot.on('contact', userContact);
+
+
+const checkKanalar = require('./midlwers/checkKanalar');
+bot.use(checkKanalar)//Xar bir xato oldidan majburiy obunani tekshiradi
 
 // Foydalanuvchi tugmalari (hears)
 const onKinoTopish = require('./handlers/hears/onKinoTopishClick');
@@ -27,6 +31,7 @@ const onKinoTopish = require('./handlers/hears/onKinoTopishClick');
 const adminPanel = require('./handlers/admin/adminPanel');
 const addKinoStart = require('./handlers/admin/addKinoStart');
 const deleteKinoStart = require('./handlers/admin/deleteKinoStart')
+const addKanalStart = require('./handlers/admin/addKanalStart');
 const addStatistika = require('./handlers/admin/hisobotStart')
 const orqagaClick = require('./handlers/hears/back');
 
@@ -37,6 +42,7 @@ bot.hears('🎬 Kino topish', onKinoTopish);
 bot.hears('🛠 Admin bo‘limi', adminPanel);
 bot.hears('🎥 Kino qo‘shish', addKinoStart);
 bot.hears('🗑 Kino o‘chirish', deleteKinoStart);
+bot.hears('➕ Kanal qo‘shish', addKanalStart);
 bot.hears('📊 Statistika', addStatistika)
 bot.hears('⬅️ Orqaga', orqagaClick);
 

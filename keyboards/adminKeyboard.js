@@ -5,7 +5,8 @@ const adminKeyboard = () => {
         // Admin bo‘limi tugmalari
         return Markup.keyboard([
             ['🎥 Kino qo‘shish', '🗑 Kino o‘chirish'],
-            ['📊 Statistika',],
+            ['➕ Kanal qo‘shish', '➖ Kanalni o‘chirish'],
+            ['📊 Statistika'],
             ['⬅️ Orqaga']
         ]).resize()
 

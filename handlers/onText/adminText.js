@@ -1,7 +1,8 @@
 const videoHandler = require('../admin/handleVideo');
 const titleHandler = require('../admin/handleText');
 const codeHandler = require('../admin/handleCode');
-const HandleDeleteKinoKod = require('../admin/handleDeleteKinoKod')
+const HandleDeleteKinoKod = require('../admin/handleDeleteKinoKod');
+const HandleKanal = require('../admin/handleKanal');
 const AdminState = require('../../models/AdminState');
 
 const adminText = async (ctx) => {
@@ -27,6 +28,10 @@ const adminText = async (ctx) => {
 
         if (msg.text && state?.step === 'awaiting_delete_code') {
             return await HandleDeleteKinoKod(ctx);
+        }
+
+        if (msg.text && state?.step === 'awaiting_channel_link') {
+            return await HandleKanal(ctx);
         }
     } catch (err) {
         console.error("Admin textda muoama", err)
