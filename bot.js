@@ -20,8 +20,8 @@ const userContact = require('./handlers/onText/userContact')
 bot.on('contact', userContact);
 
 
-const checkKanalar = require('./midlwers/checkKanalar');
-bot.use(checkKanalar)//Xar bir xato oldidan majburiy obunani tekshiradi
+//const checkKanalar = require('./midlwers/checkKanalar');
+//bot.use(checkKanalar)//Xar bir xato oldidan majburiy obunani tekshiradi
 
 // Foydalanuvchi tugmalari (hears)
 const onKinoTopish = require('./handlers/hears/onKinoTopishClick');

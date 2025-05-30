@@ -1,4 +1,5 @@
 const User = require('../../models/User');
+const checkKanalar = require('../../midlwers/checkKanalar');
 
 //Kino topish bosilganda ishlaydi
 const onKinoTopishClick = async (ctx) => {
@@ -18,11 +19,10 @@ const onKinoTopishClick = async (ctx) => {
                 }
             });
         }
-
-
+        const tekshirKanal = await checkKanalar(ctx);
+        if (!tekshirKanal) return;
         //Bu user har safar kino topishni bosganda oxirgi faolik yangilanadi
         const today = new Date().toISOString().split('T')[0];
-
 
         // Raqam bor, davom etamiz
         await User.findOneAndUpdate(

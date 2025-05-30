@@ -3,6 +3,7 @@ const { ADMIN_ID } = require('../../config/admin');
 
 const addKinoStart = async (ctx) => {
     try {
+
         if (ctx.from.id !== ADMIN_ID) return ctx.reply("❌ Siz admin emassiz");
 
         await AdminState.findOneAndUpdate(

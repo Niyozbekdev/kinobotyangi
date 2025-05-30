@@ -1,31 +1,64 @@
 const Channel = require('../../models/Channel');
 const AdminState = require('../../models/AdminState');
 
-// Yuborilgan linkni saqlash
 const saveChannelLink = async (ctx) => {
     try {
-        const state = await AdminState.findOne({ admin_id: ctx.from.id });
+        const adminId = ctx.from.id;
+        const state = await AdminState.findOne({ admin_id: adminId });
 
-        // Agar state mavjud emas yoki noto‘g‘ri bo‘lsa, chiqib ketadi
+        // Holat tekshiruvi
         if (!state || state.step !== 'awaiting_channel_link') return;
 
-        const link = ctx.text.trim(); // Admin yuborgan link
+        const link = ctx.message.text.trim();
 
-        // Regex orqali faqat @usernames yoki t.me linklarni qabul qiladi
-        if (!/^(@[a-zA-Z0-9_]{5,})|(https:\/\/t\.me\/.+)/.test(link)) {
-            return ctx.reply('❗️Noto‘g‘ri format. Faqat @usernames yoki https://t.me/... linklar qabul qilinadi.');
+        // Takroriy linkni tekshirish
+        const exists = await Channel.findOne({ link });
+        if (exists) {
+            await AdminState.deleteOne({ admin_id: adminId });
+            return ctx.reply("❗️Bu link allaqachon qo‘shilgan.");
         }
 
-        // Kanalni bazaga saqlash
-        await Channel.create({ link, added_by: ctx.from.id });
+        // Faqat Telegram uchun tekshirish lozim bo‘lgan linklar
+        const isTelegram = link.startsWith('@') || link.startsWith('https://t.me/');
 
-        // Adminning holatini tozalash
-        await AdminState.deleteOne({ admin_id: ctx.from.id });
+        if (isTelegram) {
+            // @username ni to‘liq link shakliga o‘tkazamiz
+            let chatId = link;
+            if (link.startsWith('https://t.me/')) {
+                chatId = '@' + link.replace('https://t.me/', '').replace('+', '');
+            }
 
-        // Javob qaytarish
-        ctx.reply(`✅ Kanal muvaffaqiyatli qo‘shildi: ${link}`);
+            try {
+                const info = await ctx.telegram.getChat(chatId);
+                // Agar chat mavjud bo‘lsa saqlanadi
+                await Channel.create({
+                    link,
+                    added_by: adminId,
+                    added_at: new Date()
+                });
+
+                await AdminState.deleteOne({ admin_id: adminId });
+                return ctx.reply(`✅ Telegram kanal/guruh muvaffaqiyatli qo‘shildi:\n${link}`);
+            } catch (err) {
+                console.error("❌ getChat xatosi:", err.message);
+                await AdminState.deleteOne({ admin_id: adminId });
+                return ctx.reply("❗️Bunday Telegram kanal yoki guruh topilmadi. Iltimos, to‘g‘ri link yuboring.");
+            }
+        }
+
+        // Telegram bo‘lmasa (boshqa linklar)
+        await Channel.create({
+            link,
+            added_by: adminId,
+            added_at: new Date()
+        });
+
+        await AdminState.deleteOne({ admin_id: adminId });
+        return ctx.reply(`✅ Kanal saqlandi: ${link} (tekshirilmaydi)`);
+
     } catch (err) {
-        console.error("HandleKanal faylda xato bor", err)
+        console.error("❌ Kanal linkni saqlashda xato:", err.message);
+        ctx.reply("❗️Kutilmagan xatolik yuz berdi kanal qushishda.");
     }
 };
 

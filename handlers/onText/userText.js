@@ -1,7 +1,6 @@
 // commands/kinoTopish.js
 const Kino = require('../../models/Kino'); // Kino modelini import qilish
-// const { inlineKeyboard } = require('telegraf/markup');
-// const { callbackQuery } = require('telegraf/filters');
+const checkKanalar = require('../../midlwers/checkKanalar');
 const User = require('../../models/User');
 
 const userText = async (ctx) => {
@@ -22,6 +21,9 @@ const userText = async (ctx) => {
                 }
             });
         }
+
+        const tekshirKanal = await checkKanalar(ctx);
+        if (!tekshirKanal) return;
 
         // === Asosiy tekshiruv: kinoTopish tugmasi bosilganmi yoki yo‘q ===
         if (!user.step) {
