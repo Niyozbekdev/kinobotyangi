@@ -1,5 +1,5 @@
 const User = require('../../models/User');
-const checkKanalar = require('../../midlwers/checkKanalar');
+const checkKanalar = require('../actions/checkKanalar');
 
 //Kino topish bosilganda ishlaydi
 const onKinoTopishClick = async (ctx) => {

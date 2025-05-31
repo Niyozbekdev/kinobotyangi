@@ -1,5 +1,5 @@
-const Channel = require('../models/Channel');
-const { ADMIN_ID } = require('../config/admin');
+const Channel = require('../../models/Channel');
+const { ADMIN_ID } = require('../../config/admin');
 
 // Foydalanuvchini barcha Telegram kanallariga obuna bo‘lganini tekshiradi
 async function checkKanalar(ctx) {
@@ -18,7 +18,13 @@ async function checkKanalar(ctx) {
             const link = ch.link.trim();
             const isTelegram = link.startsWith('@') || link.startsWith('https://t.me/');
 
-            buttons.push([{ text: '📢 Obuna bo‘lish', url: link }])
+            // Tugma linki
+            let buttonUrl = link;
+            if (link.startsWith('@')) {
+                buttonUrl = `https://t.me/${link.slice(1)}`;
+            }
+
+            buttons.push([{ text: '📢 Obuna bo‘lish', url: buttonUrl }])
 
             if (isTelegram) {
                 let chatId = link;
@@ -62,6 +68,7 @@ async function checkKanalar(ctx) {
 
         return true; // Hammasi joyida bo‘lsa davom ettiriladi
     } catch (err) {
+        ctx.reply("Biroz kutib turing")
         console.error("ChechKanalar faylda xato bor", err)
     }
 

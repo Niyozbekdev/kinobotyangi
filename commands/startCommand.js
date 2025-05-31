@@ -1,5 +1,5 @@
 const User = require('../models/User');
-const checkKanalar = require('../midlwers/checkKanalar')
+const checkKanalar = require('../handlers/actions/checkKanalar')
 //Start logikasi istalgan joydan chaqrish mumkinn
 const handleStart = async (ctx) => {
     try {
@@ -63,8 +63,10 @@ const handleStart = async (ctx) => {
                 }
             });
         }
+
         const tekshirKanal = await checkKanalar(ctx);
         if (!tekshirKanal) return;
+
     } catch (err) {
         if (error.code === 403)
             console.error("HandlerStartda", err)

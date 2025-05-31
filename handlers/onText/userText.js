@@ -1,6 +1,6 @@
 // commands/kinoTopish.js
 const Kino = require('../../models/Kino'); // Kino modelini import qilish
-const checkKanalar = require('../../midlwers/checkKanalar');
+const checkKanalar = require('../actions/checkKanalar');
 const User = require('../../models/User');
 
 const userText = async (ctx) => {

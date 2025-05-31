@@ -18,6 +18,9 @@ const saveChannelLink = async (ctx) => {
             return ctx.reply("❗️Bu link allaqachon qo‘shilgan.");
         }
 
+        //Hozirgi mavjud kanalarni sonini aniqlaymiz
+        const totalChanels = await Channel.countDocuments();
+        const number = totalChanels + 1;
         // Faqat Telegram uchun tekshirish lozim bo‘lgan linklar
         const isTelegram = link.startsWith('@') || link.startsWith('https://t.me/');
 
@@ -29,9 +32,9 @@ const saveChannelLink = async (ctx) => {
             }
 
             try {
-                const info = await ctx.telegram.getChat(chatId);
                 // Agar chat mavjud bo‘lsa saqlanadi
                 await Channel.create({
+                    number,
                     link,
                     added_by: adminId,
                     added_at: new Date()
@@ -48,6 +51,7 @@ const saveChannelLink = async (ctx) => {
 
         // Telegram bo‘lmasa (boshqa linklar)
         await Channel.create({
+            number,
             link,
             added_by: adminId,
             added_at: new Date()

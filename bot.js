@@ -34,6 +34,7 @@ const deleteKinoStart = require('./handlers/admin/deleteKinoStart')
 const addKanalStart = require('./handlers/admin/addKanalStart');
 const addStatistika = require('./handlers/admin/hisobotStart')
 const orqagaClick = require('./handlers/hears/back');
+const channelList = require('./handlers/admin/channelListStart')
 
 bot.hears('🎬 Kino topish', onKinoTopish);
 // bot.hears('📞 Bog‘lanish', boglanish);
@@ -43,6 +44,7 @@ bot.hears('🛠 Admin bo‘limi', adminPanel);
 bot.hears('🎥 Kino qo‘shish', addKinoStart);
 bot.hears('🗑 Kino o‘chirish', deleteKinoStart);
 bot.hears('➕ Kanal qo‘shish', addKanalStart);
+bot.hears('📋 Kanallar', channelList);
 bot.hears('📊 Statistika', addStatistika)
 bot.hears('⬅️ Orqaga', orqagaClick);
 
