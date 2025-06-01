@@ -11,7 +11,7 @@ const userSchema = new mongoose.Schema({
     user_number: { type: Number, default: null },
     joined_date: { type: String },
     step: { type: String, required: null },
-    step: String,
+    //step: String,
     prev_step: String,
     is_blocked: { type: Boolean, default: false },
     join: { type: Date, default: Date.now },

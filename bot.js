@@ -33,23 +33,27 @@ const addKinoStart = require('./handlers/admin/addKinoStart');
 const deleteKinoStart = require('./handlers/admin/deleteKinoStart')
 const addKanalStart = require('./handlers/admin/addKanalStart');
 const addStatistika = require('./handlers/admin/hisobotStart')
-const orqagaClick = require('./handlers/hears/back');
+//const orqagaClick = require('./handlers/hears/back');
+const orqagaAdmin = require('./handlers/hears/adminOrqagaStart');
 const channelList = require('./handlers/admin/channelListStart')
 const xabarYuborishniBoshlash = require('./handlers/admin/xabarYuborishStart');
+const xabarlarniTozalash = require('./handlers/admin/clearYuborganXabarni');
 
 bot.hears('🎬 Kino topish', onKinoTopish);
 // bot.hears('📞 Bog‘lanish', boglanish);
 // bot.hears('📤 Ulashish', ulashish);
 // bot.hears('📊 Darajam', darajam);
-bot.hears('🛠 Admin bo‘limi', adminPanel);
+//bot.hears('🛠 Admin bo‘limi', adminPanel);
 bot.hears('🎥 Kino qo‘shish', addKinoStart);
 bot.hears('🗑 Kino o‘chirish', deleteKinoStart);
 bot.hears('➕ Kanal qo‘shish', addKanalStart);
 bot.hears('📋 Kanallar', channelList);
 bot.hears('📢 Xabar yuborish', xabarYuborishniBoshlash);
+bot.hears('🧼 Xabarlarni tozalash', xabarlarniTozalash);
 bot.hears('📊 Statistika', addStatistika)
-bot.hears('⬅️ Orqaga', orqagaClick);
+bot.hears('⬅️ Orqaga', orqagaAdmin);
 
+bot.command('niyozbek', adminPanel);
 bot.command('kino', async (ctx) => {
     try {
         await onKinoTopish(ctx);

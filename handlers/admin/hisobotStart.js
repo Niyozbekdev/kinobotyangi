@@ -6,6 +6,7 @@ const statistikaniOlish = async (ctx) => {
         const userCount = await User.countDocuments();
         const today = new Date().toISOString().split('T')[0];
         const todayUsers = await User.countDocuments({ joined_date: today });
+        const bloklanganlar = await User.countDocuments({ is_blocked: true })
 
         const kinoCount = await Kino.countDocuments({ is_deleted: false });
         const engKopKorilgan = await Kino.findOne({ is_deleted: false })
@@ -15,7 +16,8 @@ const statistikaniOlish = async (ctx) => {
         let msg = ` 📊 <b>STATISTIKA PANELI</b>\n\n`;
         msg += ` 👤 <b>Foydalanuvchilar:</b>\n`;
         msg += ` └ 📌 Jami: <b>${userCount}</b>\n`;
-        msg += ` └ 🆕 Bugun qo‘shilgan: <b>${todayUsers}</b>\n\n`;
+        msg += ` └ 🆕 Bugun qo‘shilgan: <b>${todayUsers}</b>\n`
+        msg += ` └ 🚫 Botni bloklaganlar: <b>${bloklanganlar}</b> \n\n`;
 
         msg += ` 🎬 <b>Kino ma’lumotlari:</b>\n`;
         msg += `  └ 🎞 Jami kinolar: <b>${kinoCount}</b>\n\n`;

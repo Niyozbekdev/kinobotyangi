@@ -6,7 +6,7 @@ const adminKeyboard = () => {
         return Markup.keyboard([
             ['🎥 Kino qo‘shish', '🗑 Kino o‘chirish'],
             ['➕ Kanal qo‘shish', '📋 Kanallar'],
-            ['📢 Xabar yuborish'],
+            ['📢 Xabar yuborish', '🧼 Xabarlarni tozalash'],
             ['📊 Statistika'],
             ['⬅️ Orqaga']
         ]).resize()

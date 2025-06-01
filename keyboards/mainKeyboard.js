@@ -4,8 +4,8 @@ const { Markup } = require('telegraf');
 const boshMenyu = () => {
     try {
         return Markup.keyboard([
-            ['🎬 Kino topish'],// '📞 Bog‘lanish'],
-            ['🛠 Admin bo‘limi']
+            ['🎬 Kino topish']// '📞 Bog‘lanish'],
+            //['🛠 Admin bo‘limi']
         ]).resize();
     } catch (err) {
         console.error("Mainkeyboarda", err)
