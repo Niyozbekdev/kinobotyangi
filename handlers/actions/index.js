@@ -4,13 +4,19 @@ module.exports = (bot) => {
         const deleteMsg = require('./delereMsg');
         const deletePermanentKino = require('./deletePermanentKino');
         const deleteTemporaryKino = require('./deleteTemporaryKino');
-        const checkKanalar = require('./checkKanalar')
-        const deleteChannel = require('./deleteChannel')
+        const checkKanalar = require('./checkKanalar');
+        const deleteChannel = require('./deleteChannel');
+        const xabarniYuborish = require('./xabarniYuborish');
+        const brAddBtn = require('./brAddBtn');
+        const brNotBtn = require('./brNotBtn');
 
         bot.action('delete_msg', deleteMsg);
         bot.action('delete_permanent', deletePermanentKino);
         bot.action('delete_temporary', deleteTemporaryKino);
-        bot.action('check_subscription', checkKanalar)
+        bot.action('check_subscription', checkKanalar);
+        bot.action('br_addbtn', brAddBtn);
+        bot.action('br_nobtn', brNotBtn);
+        bot.action('br_send', xabarniYuborish);
         bot.action(/delete_channel_\d+/, deleteChannel)
 
 

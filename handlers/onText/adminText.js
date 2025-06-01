@@ -3,6 +3,9 @@ const titleHandler = require('../admin/handleText');
 const codeHandler = require('../admin/handleCode');
 const HandleDeleteKinoKod = require('../admin/handleDeleteKinoKod');
 const HandleKanal = require('../admin/handleKanal');
+const xabarniQabulQilish = require('../admin/xabarniQabulQilish');
+const tugmaMatniniQabulQilish = require('../admin/tugmaMatniQabulQilish');
+const tugmaURLniQabulQilish = require('../admin/tugmaURLniQabulQilish')
 const AdminState = require('../../models/AdminState');
 
 const adminText = async (ctx) => {
@@ -33,6 +36,17 @@ const adminText = async (ctx) => {
         if (msg.text && state?.step === 'awaiting_channel_link') {
             return await HandleKanal(ctx);
         }
+        if ((msg.text || msg.photo || msg.video) && state?.step === 'xabar_kutilmoqda') {
+            return await xabarniQabulQilish(ctx);
+        }
+        if (msg.text && state?.step === 'awaiting_button_text') {
+            return await tugmaMatniniQabulQilish(ctx);
+        }
+        if (msg.text && state?.step === 'awaiting_button_url') {
+            return await tugmaURLniQabulQilish(ctx);
+        }
+
+
     } catch (err) {
         console.error("Admin textda muoama", err)
     }

@@ -8,6 +8,13 @@ const AdminStateSchema = new mongoose.Schema({
     temp_file_id: { type: String, default: null },
     temp_title: { type: String, default: null },
     upsert: { type: Boolean, default: false },
+    temp_button_text: { type: String, default: null },
+    temp_button_url: { type: String, default: null },
+    //Bu xabar yuborish va boshqa maqsadlar uchun ishltiladi
+    data: {
+        type: mongoose.Schema.Types.Mixed,
+        default: {}
+    }
 });
 
 module.exports = mongoose.model('AdminState', AdminStateSchema);
