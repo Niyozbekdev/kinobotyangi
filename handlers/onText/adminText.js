@@ -5,8 +5,10 @@ const HandleDeleteKinoKod = require('../admin/handleDeleteKinoKod');
 const HandleKanal = require('../admin/handleKanal');
 const xabarniQabulQilish = require('../admin/xabarniQabulQilish');
 const tugmaMatniniQabulQilish = require('../admin/tugmaMatniQabulQilish');
-const tugmaURLniQabulQilish = require('../admin/tugmaURLniQabulQilish')
+const tugmaURLniQabulQilish = require('../admin/tugmaURLniQabulQilish');
 const AdminState = require('../../models/AdminState');
+const VideoQabulState = require('../../models/VideoQabulState');
+const videoManzilSaqlash = require('../admin/videoManzilSaqlash');
 
 const adminText = async (ctx) => {
     try {
@@ -16,6 +18,12 @@ const adminText = async (ctx) => {
         if (!msg) return;
 
         const state = await AdminState.findOne({ admin_id: userId });
+        const videoQabulState = await VideoQabulState.findOne({ admin_id: userId });
+
+        //Bu admin video manzil qayerga saqlanish kerakligini tekshirib oladi.
+        if (msg.text && videoQabulState?.step === 'manzil_kiritish') {
+            return await videoManzilSaqlash(ctx);
+        }
 
         if (msg.video && state?.step === 'waiting_for_video') {
             return await videoHandler(ctx);

@@ -44,7 +44,6 @@ const xabarniYuborish = async (ctx) => {
 
                 yuborildi++;
             } catch (err) {
-                console.log(err)
                 //Foydalanuvchi botni blokclagan yoki chiqib ketgan yoki yuq bunday foydalanuvchi
                 if (err.code === 403) {
                     await User.updateOne(

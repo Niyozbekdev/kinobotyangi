@@ -1,4 +1,4 @@
-const AdminState = require('../../models/AdminState')
+const AdminState = require('../../models/AdminState');
 const mainKeyboard = require('../../keyboards/mainKeyboard');
 //const { ADMIN_ID } = require('../../config/admin');
 

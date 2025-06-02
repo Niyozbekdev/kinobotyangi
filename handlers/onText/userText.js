@@ -5,7 +5,6 @@ const User = require('../../models/User');
 
 const userText = async (ctx) => {
     try {
-
         const userId = ctx.from.id;
         const user = await User.findOne({ user_id: userId });
 
@@ -36,7 +35,7 @@ const userText = async (ctx) => {
 
             // Faqat matnli xabarlar bilan ishlash
             if (!ctx.message || typeof ctx.message.text !== "string") {
-                return; // Foydalanuvchi tugma bosgan yoki boshqa narsa yuborgan
+                return ctx.reply("xatos"); // Foydalanuvchi tugma bosgan yoki boshqa narsa yuborgan
             }
             //Bu filim kodini oladi foydalanuvchidan
             const kod = ctx.message.text.trim();
@@ -90,6 +89,7 @@ const userText = async (ctx) => {
                 ctx.reply('Video yuborishda muoma yuz berdi')
             }
         }
+
     } catch (err) {
         console.error("Usertextda", err)
     }

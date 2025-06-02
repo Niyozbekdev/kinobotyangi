@@ -25,6 +25,7 @@ bot.on('contact', userContact);
 
 // Foydalanuvchi tugmalari (hears)
 const onKinoTopish = require('./handlers/hears/onKinoTopishClick');
+const onVideoYuborish = require('./handlers/hears/videoYuborishStart');
 // const boglanish = require('./handlers/hears/boglanish');
 // const ulashish = require('./handlers/hears/ulashish');
 // const darajam = require('./handlers/hears/darajam');
@@ -38,8 +39,10 @@ const orqagaAdmin = require('./handlers/hears/adminOrqagaStart');
 const channelList = require('./handlers/admin/channelListStart')
 const xabarYuborishniBoshlash = require('./handlers/admin/xabarYuborishStart');
 const xabarlarniTozalash = require('./handlers/admin/clearYuborganXabarni');
+const videoManzilSoraladi = require('./handlers/admin/videoManzilSorash')
 
 bot.hears('🎬 Kino topish', onKinoTopish);
+bot.hears('🎥 Video yuborish', onVideoYuborish);
 // bot.hears('📞 Bog‘lanish', boglanish);
 // bot.hears('📤 Ulashish', ulashish);
 // bot.hears('📊 Darajam', darajam);
@@ -50,6 +53,7 @@ bot.hears('➕ Kanal qo‘shish', addKanalStart);
 bot.hears('📋 Kanallar', channelList);
 bot.hears('📢 Xabar yuborish', xabarYuborishniBoshlash);
 bot.hears('🧼 Xabarlarni tozalash', xabarlarniTozalash);
+bot.hears('🎥 Video qabul qilish', videoManzilSoraladi);
 bot.hears('📊 Statistika', addStatistika)
 bot.hears('⬅️ Orqaga', orqagaAdmin);
 

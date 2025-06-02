@@ -76,11 +76,10 @@ const handleStart = async (ctx) => {
 //Start komandasi bosilganda shu buladi Asosiy menyu
 const startCommand = async (bot) => {
     try {
-
+        await bot.start(handleStart); //Start komandasi
     } catch (err) {
         console.error("Start comandda", err);
     }
-    await bot.start(handleStart); //Start komandasi
 }
 
 module.exports = {
