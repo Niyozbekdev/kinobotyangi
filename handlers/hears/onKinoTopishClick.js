@@ -1,4 +1,5 @@
 const User = require('../../models/User');
+const UserVideoYuborish = require('../../models/UserVideoYuborish');
 const checkKanalar = require('../actions/checkKanalar');
 
 //Kino topish bosilganda ishlaydi
@@ -7,6 +8,8 @@ const onKinoTopishClick = async (ctx) => {
         const userId = ctx.from.id
 
         const user = await User.findOne({ user_id: userId });
+
+        const userVideo = await UserVideoYuborish.findOne({ user_id: userId });
 
         if (!user || !user.phone_number) {
             return ctx.reply("❗️Botdan toliq foydalanish uchun raqamingizni yuboring", {
@@ -31,6 +34,10 @@ const onKinoTopishClick = async (ctx) => {
             { upsert: true },
             { last_active_at: today }
         );
+
+        userVideo.step = null;
+        await userVideo.save();
+
         return ctx.reply("🎬 Kino kodini kiriting:");
     } catch (err) {
         console.error("onKinoTopishda", err)

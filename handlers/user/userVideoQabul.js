@@ -1,6 +1,5 @@
 const UserVideoYuborish = require('../../models/UserVideoYuborish');
 const VideoQabulState = require('../../models/VideoQabulState');
-const boshMenyu = require('../../keyboards/mainKeyboard');
 
 // ✅ USER STEP: Agar foydalanuvchi video yuborayotgan bo‘lsa
 const UserVideo = async (ctx) => {
@@ -21,8 +20,11 @@ const UserVideo = async (ctx) => {
                 parse_mode: 'HTML'
             });
 
+
             user.step = null;
             await user.save();
+
+
             return ctx.reply("✅ Videongiz yuborildi.");
         }
     } catch (err) {

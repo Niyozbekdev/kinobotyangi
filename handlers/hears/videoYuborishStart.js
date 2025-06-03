@@ -9,6 +9,7 @@ const UserVideoYuborish = require('../../models/UserVideoYuborish');
 const videoYuborishStart = async (ctx) => {
     try {
         const user_id = ctx.from.id;
+        const user = await User.findOne({ user_id: user_id });
 
         await UserVideoYuborish.findOneAndUpdate(
             { user_id },
@@ -16,14 +17,8 @@ const videoYuborishStart = async (ctx) => {
             { upsert: true }
         );
 
-        // // Userni topamiz yoki yangisini yaratamiz
-        // let user = await User.findOne({ user_id });
-        // if (!user) {
-        //     user = new User({ user_id });
-        // }
-
-        // user.step = 'user_video'; // Stepni belgilaymiz
-        // await user.save();
+        user.step = null;
+        await user.save();
 
         await ctx.reply('📥 Endi video yuborishingiz mumkin!');
     } catch (err) {
