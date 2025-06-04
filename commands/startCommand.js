@@ -1,5 +1,6 @@
 const User = require('../models/User');
-const checkKanalar = require('../handlers/actions/checkKanalar')
+const checkKanalar = require('../handlers/actions/checkKanalar');
+const boshMenyu = require('../keyboards/mainKeyboard');
 //Start logikasi istalgan joydan chaqrish mumkinn
 const handleStart = async (ctx) => {
     try {
@@ -33,7 +34,7 @@ const handleStart = async (ctx) => {
                 })
             }
 
-            return ctx.reply(`🏠 Bosh menyuga qaytdingiz: ` + ctx.chat.first_name);
+            return ctx.reply(`🏠 Bosh menyuga qaytdingiz: ` + ctx.chat.first_name, boshMenyu());
         } else {
             const total = await User.countDocuments();
             const today = new Date().toISOString().split('T')[0];

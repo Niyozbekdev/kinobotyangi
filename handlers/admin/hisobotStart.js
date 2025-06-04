@@ -1,8 +1,12 @@
 const User = require('../../models/User');
 const Kino = require('../../models/Kino');
+const { ADMIN_ID } = require('../../config/admin');
 
 const statistikaniOlish = async (ctx) => {
     try {
+        const admin_id = ctx.from.id;
+        if (admin_id !== ADMIN_ID) return;
+
         const userCount = await User.countDocuments();
         const today = new Date().toISOString().split('T')[0];
         const todayUsers = await User.countDocuments({ joined_date: today });

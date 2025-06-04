@@ -39,7 +39,8 @@ const orqagaAdmin = require('./handlers/hears/adminOrqagaStart');
 const channelList = require('./handlers/admin/channelListStart')
 const xabarYuborishniBoshlash = require('./handlers/admin/xabarYuborishStart');
 const xabarlarniTozalash = require('./handlers/admin/clearYuborganXabarni');
-const videoManzilSoraladi = require('./handlers/admin/videoManzilSorash')
+const videoManzilSoraladi = require('./handlers/admin/videoManzilSorash');
+const videoManzilKorsatish = require('./handlers/admin/addVideoManzilStart');
 
 bot.hears('🎬 Kino topish', onKinoTopish);
 bot.hears('🎥 Video yuborish', onVideoYuborish);
@@ -53,7 +54,8 @@ bot.hears('➕ Kanal qo‘shish', addKanalStart);
 bot.hears('📋 Kanallar', channelList);
 bot.hears('📢 Xabar yuborish', xabarYuborishniBoshlash);
 bot.hears('🧼 Xabarlarni tozalash', xabarlarniTozalash);
-bot.hears('🎥 Video qabul qilish', videoManzilSoraladi);
+bot.hears('💾 Video qabul qilish', videoManzilSoraladi);
+bot.hears('📀 Manzil', videoManzilKorsatish)
 bot.hears('📊 Statistika', addStatistika)
 bot.hears('⬅️ Orqaga', orqagaAdmin);
 

@@ -43,7 +43,7 @@ const userText = async (ctx) => {
             //Bu kodni formatlaydi kod soraganda user tugma bosa xabar jo'natmaydi
             const isValidCode = /^[A-Za-z0-9]{1,}$/.test(kod);
             if (!isValidCode) {
-                return ctx.reply("Kodni yuboring"); // noto‘g‘ri matn, ehtimol tugma bosilgan
+                return ctx.reply(`❎ Kodni yuboring`); // noto‘g‘ri matn, ehtimol tugma bosilgan
             }
 
             const kino = await Kino.findOne({ code: kod, is_deleted: false });

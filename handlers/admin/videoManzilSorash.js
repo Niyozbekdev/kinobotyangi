@@ -15,10 +15,11 @@ const videoManzilSoraladi = async (ctx) => {
         await VideoQabulState.findOneAndUpdate(
             { admin_id: userId },
             { step: 'manzil_kiritish', updated_at: new Date() },
-            { upsert: true }
+            { upsert: true, new: true }
         );
 
-        await ctx.reply("📥 Qayerga video yuborilsin? (kanal yoki guruh username / ID ni kiriting)");
+        await ctx.reply(`❗️Qayerga videolar qabul qilinsin manzilni shu ko'rinishda yuboring.\n\n ▶️ @kanalname \n ▶️-100 dan keyin kanal Idsi\n ▶️ https://t.me/kanal link`)
+
     } catch (err) {
         console.error("❌ videoManzilSoraladi xatosi:", err.message);
         await ctx.reply("Xatolik: video manzilini so‘rashda xatolik yuz berdi.");

@@ -4,7 +4,7 @@ const { ADMIN_ID } = require('../../config/admin');
 const deleteKinoStart = async (ctx) => {
     try {
 
-        if (ctx.from.id !== ADMIN_ID) return ctx.reply("Siz bu amalni bajaraolmaysiz");
+        if (ctx.from.id !== ADMIN_ID) return;
 
         await AdminState.findOneAndUpdate(
             { admin_id: ctx.from.id },

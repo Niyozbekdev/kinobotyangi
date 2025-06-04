@@ -4,10 +4,12 @@
 */
 
 const AdminState = require('../../models/AdminState');
+const { ADMIN_ID } = require('../../config/admin');
 
 const xabarYuborishniBoshlash = async (ctx) => {
     try {
         const admin_id = ctx.from.id;
+        if (admin_id !== ADMIN_ID) return;
 
         await AdminState.findOneAndUpdate(
             { admin_id },

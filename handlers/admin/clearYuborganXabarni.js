@@ -4,9 +4,12 @@
  */
 
 const SentMessage = require('../../models/SendMessage');
+const { ADMIN_ID } = require('../../config/admin');
 
 const clearMessages = async (ctx) => {
     try {
+        const userId = ctx.from.id;
+        if (userId !== ADMIN_ID) return;
         const all = await SentMessage.find({});
         let count = 0;
         let noCount = 0;

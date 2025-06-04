@@ -1,8 +1,11 @@
 // Kanal qo‘shish jarayonini boshlash
 const AdminState = require('../../models/AdminState');
+const { ADMIN_ID } = require('../../config/admin');
 
 const addKanalStart = async (ctx) => {
     try {
+        const admin_id = ctx.from.id;
+        if (admin_id !== ADMIN_ID) return;
         // Admin holatini yangilash
         await AdminState.findOneAndUpdate(
             { admin_id: ctx.from.id },             // Admin ID
