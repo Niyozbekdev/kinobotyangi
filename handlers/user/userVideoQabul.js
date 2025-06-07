@@ -21,10 +21,10 @@ const UserVideo = async (ctx) => {
         }
 
         // 3. Admin tomonidan tayyorlangan video qabul manzilini topamiz
-        const state = await VideoQabulState.findOne({ step: 'tayyor' });
-        if (!state || !state.qabul_manzil) {
-            return await ctx.reply("❗️Hozircha video qabul qilinmayabdi");
-        }
+        // const state = await VideoQabulState.findOne({ step: 'tayyor' });
+        // if (!state || !state.qabul_manzil) {
+        //     return await ctx.reply("❗️Hozircha video qabul qilinmayabdi");
+        // }
 
         // 4. Videoni yuborish
         await ctx.telegram.sendVideo(state.qabul_manzil, msg.video.file_id, {

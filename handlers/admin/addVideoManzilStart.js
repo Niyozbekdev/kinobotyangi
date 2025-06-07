@@ -7,14 +7,14 @@ const showVideoManzil = async (ctx) => {
     try {
         const userId = ctx.from.id;
         if (userId !== ADMIN_ID) return;
-        const state = await VideoQabulState.findOne({ step: 'manzil_kiritish' });
+        const state = await VideoQabulState.findOne({ admin_id: userId });
 
         if (!state || !state.qabul_manzil) {
             return await ctx.reply("❗️Hozircha hech qanday manzil belgilanmagan.");
         }
 
         // 🖼 Manzil va tugma chiqarish
-        await ctx.reply(`📍 Saqlanayotgan manzil:\n\n<code>${state.qabul_manzil}\n ${state.link}</code>`, {
+        await ctx.reply(`📍 Saqlanayotgan manzil:\n\n<code>🆔 ${state.qabul_manzil}\n🔗 ${state.link}</code>`, {
             parse_mode: "HTML",
             reply_markup: {
                 inline_keyboard: [

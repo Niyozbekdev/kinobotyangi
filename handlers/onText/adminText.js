@@ -3,6 +3,7 @@ const titleHandler = require('../admin/handleText');
 const codeHandler = require('../admin/handleCode');
 const HandleDeleteKinoKod = require('../admin/handleDeleteKinoKod');
 const HandleKanal = require('../admin/handleKanal');
+const saveChanelInvate = require('../actions/saveChanelInvate');
 const xabarniQabulQilish = require('../admin/xabarniQabulQilish');
 const tugmaMatniniQabulQilish = require('../admin/tugmaMatniQabulQilish');
 const tugmaURLniQabulQilish = require('../admin/tugmaURLniQabulQilish');
@@ -44,6 +45,11 @@ const adminText = async (ctx) => {
         if (msg.text && state?.step === 'awaiting_channel_link') {
             return await HandleKanal(ctx);
         }
+
+        if (msg.text && state?.step === 'awaiting_channel_invite_link') {
+            return await saveChanelInvate(ctx);
+        }
+
         if ((msg.text || msg.photo || msg.video) && state?.step === 'xabar_kutilmoqda') {
             return await xabarniQabulQilish(ctx);
         }

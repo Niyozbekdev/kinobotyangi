@@ -5,6 +5,7 @@ module.exports = (bot) => {
         const deletePermanentKino = require('./deletePermanentKino');
         const deleteTemporaryKino = require('./deleteTemporaryKino');
         const checkKanalar = require('./checkKanalar');
+        const saveChannelInvite = require('./saveChanelInvate')
         const deleteChannel = require('./deleteChannel');
         const xabarniYuborish = require('./xabarniYuborish');
         const brAddBtn = require('./brAddBtn');
@@ -15,6 +16,7 @@ module.exports = (bot) => {
         bot.action('delete_permanent', deletePermanentKino);
         bot.action('delete_temporary', deleteTemporaryKino);
         bot.action('check_subscription', checkKanalar);
+        bot.action('awaiting_channel_invite_link', saveChannelInvite);
         bot.action('br_addbtn', brAddBtn);
         bot.action('br_nobtn', brNotBtn);
         bot.action('br_send', xabarniYuborish);

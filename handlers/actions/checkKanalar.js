@@ -1,77 +1,97 @@
 const Channel = require('../../models/Channel');
 const { ADMIN_ID } = require('../../config/admin');
 
-// Foydalanuvchini barcha Telegram kanallariga obuna bo‘lganini tekshiradi
-async function checkKanalar(ctx) {
+/**
+ * ✅ Foydalanuvchini barcha talab qilingan kanallarga obuna bo‘lganini tekshiradi.
+ * 🔒 Agar obuna bo‘lmagan bo‘lsa, kanal(lar)ning tugmalari bilan ogohlantirish yuboriladi.
+ * 📎 Private kanallar uchun ID asosida invite_link orqali tugma chiqariladi.
+ */
+const checkKanalar = async (ctx) => {
     try {
         const userId = ctx.from.id;
-        // 🔐 Adminlar uchun tekshiruvdan chiqaramiz
-        if (userId === ADMIN_ID) {
-            return true; // admin bo‘lsa ruxsat beramiz
-        }
 
-        const channels = await Channel.find(); // Barcha kanallarni bazadan olish
-        let unsubscribed = []; // Obuna bo‘lmagan kanallar ro‘yxati
-        let buttons = []
+        // 🔓 Admin bo‘lsa tekshiruvdan o‘tmaydi
+        if (String(userId) === String(ADMIN_ID)) return true;
+
+        const channels = await Channel.find();
+        const unsubscribed = [];
+        const buttons = [];
 
         for (const ch of channels) {
-            const link = ch.link.trim();
-            const isTelegram = link.startsWith('@') || link.startsWith('https://t.me/');
+            const { link, invite_link } = ch;
+            let chatId = null;
+            let buttonUrl = invite_link || null;
 
-            // Tugma linki
-            let buttonUrl = link;
-            if (link.startsWith('@')) {
+            // 1️⃣ Agar link @kanal
+            if (link?.startsWith('@')) {
+                chatId = link;
                 buttonUrl = `https://t.me/${link.slice(1)}`;
             }
 
-            buttons.push([{ text: '📢 Obuna bo‘lish', url: buttonUrl }])
-
-            if (isTelegram) {
-                let chatId = link;
-                if (link.startsWith('https://t.me/')) {
-                    chatId = '@' + link.replace('https://t.me/', '');
-                }
-
-                try {
-                    const res = await ctx.telegram.getChatMember(chatId, userId);
-                    if (['left', 'kicked'].includes(res.status)) {
-                        unsubscribed.push(link);
-                    }
-                } catch (err) {
-                    unsubscribed.push(link);
-                }
+            // 2️⃣ Agar link https://t.me/kanal
+            else if (link?.startsWith('https://t.me/')) {
+                chatId = '@' + link.replace('https://t.me/', '').replace('+', '');
+                buttonUrl = link;
             }
 
-            // Boshqa linklar tekshirilmaydi, lekin chiqariladi
+            // 3️⃣ Agar link -100... ID bo‘lsa (private kanal)
+            else if (/^-100\d+$/.test(link)) {
+                chatId = link;
+                // buttonUrl faqat invite_link mavjud bo‘lsa ishlaydi
+                buttonUrl = invite_link || null;
+            }
+
+            // 🔘 Tugmani foydalanuvchiga chiqaramiz
+            // if (buttonUrl) {
+            //     buttons.push([{ text: '📢 Obuna bo‘lish', url: buttonUrl }]);
+            // }
+
+            // 🔍 Agar chatId mavjud bo‘lsa, getChatMember orqali tekshir
+            if (chatId) {
+                try {
+                    const member = await ctx.telegram.getChatMember(chatId, userId);
+                    if (['left', 'kicked'].includes(member.status)) {
+                        unsubscribed.push({ chatId, buttonUrl }); // ❌ obuna bo‘lmagan
+                    }
+                } catch (err) {
+                    console.warn(`⚠️ getChatMember xatosi (${chatId}):`, err.message);
+                    unsubscribed.push({ chatId, buttonUrl }); // ⚠️ xato bo‘lsa, obuna emas deb hisoblaymiz
+                }
+            }
         }
 
-        // Agar obuna bo‘lmagan kanal bo‘lsa, foydalanuvchiga xabar yuboriladi
+        // ❗️ Obuna bo‘lmaganlar mavjud bo‘lsa — foydalanuvchini to‘xtatamiz
         if (unsubscribed.length > 0) {
-
+            for (const u of unsubscribed) {
+                if (u.buttonUrl) {
+                    buttons.push([{ text: '📢 Obuna bo‘lish', url: u.buttonUrl }]);
+                }
+            }
             buttons.push([{ text: '✅ Tekshirish', callback_data: 'check_subscription' }]);
 
             await ctx.reply(
-                '❗️ Botdan foydalanish uchun quyidagi kanallarga obuna bo‘ling:',
+                "❗️ Botdan foydalanishdan avval quyidagi kanallarga obuna bo‘ling:",
                 {
                     reply_markup: {
                         inline_keyboard: buttons
                     }
                 }
             );
-            return false; // Botdan foydalanishga ruxsat berilmaydi
+            return false;
         }
 
-        // Agar tekshiruv callback orqali kelgan bo‘lsa - eski xabarni o‘zgartiramiz
-        if (ctx.callbackQuery && ctx.callbackQuery.message) {
-            await ctx.editMessageText("✅ Kino qidirishingiz mumkin.");
+        // ✅ Hammasi joyida — foydalanuvchi botdan foydalanishi mumkin
+        if (ctx.callbackQuery?.message) {
+            await ctx.editMessageText("✅ Obuna holati tasdiqlandi. Botdan foydalanishingiz mumkin.");
         }
 
-        return true; // Hammasi joyida bo‘lsa davom ettiriladi
+        return true;
+
     } catch (err) {
-        ctx.reply("Biroz kutib turing")
-        console.error("ChechKanalar faylda xato bor", err)
+        console.error("❌ checkKanalar() xato:", err.message);
+        await ctx.reply("❗️Kanallarni tekshirishda xatolik yuz berdi. Keyinroq urinib ko‘ring.");
+        return false;
     }
-
-}
+};
 
 module.exports = checkKanalar;
