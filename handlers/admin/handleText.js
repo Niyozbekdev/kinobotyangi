@@ -15,7 +15,7 @@ const titleHandler = async (ctx) => {
                     temp_title: ctx.message.text
                 }
             );
-            return ctx.reply('🆔 Endi kino kodini kiriting. (Masalan: 101)', { parse_mode: 'HTML' });
+            return ctx.reply('🆔 Endi kino kodini kiriting.\n🎯 Masalan: 101', { parse_mode: 'HTML' });
         }
     } catch (err) {
         console.error("Handletextda", err)

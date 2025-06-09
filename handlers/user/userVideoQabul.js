@@ -20,11 +20,11 @@ const UserVideo = async (ctx) => {
             return await ctx.reply("⚠️ Siz video yuborish rejimida emassiz.");
         }
 
-        // 3. Admin tomonidan tayyorlangan video qabul manzilini topamiz
-        // const state = await VideoQabulState.findOne({ step: 'tayyor' });
-        // if (!state || !state.qabul_manzil) {
-        //     return await ctx.reply("❗️Hozircha video qabul qilinmayabdi");
-        // }
+        //3 Admin tomonidan tayyorlangan video qabul manzilini topamiz
+        const state = await VideoQabulState.findOne({ step: 'tayyor' });
+        if (!state || !state.qabul_manzil) {
+            return await ctx.reply("❗️Hozircha video qabul qilinmayabdi");
+        }
 
         // 4. Videoni yuborish
         await ctx.telegram.sendVideo(state.qabul_manzil, msg.video.file_id, {
@@ -39,7 +39,7 @@ const UserVideo = async (ctx) => {
         return await ctx.reply("✅ Videongiz muvaffaqiyatli yuborildi.");
     } catch (err) {
         console.error("❌ UserVideo faylida xato:", err.message);
-        return await ctx.reply("Xatolik: videoni yuborishda muammo yuz berdi.");
+        return await ctx.reply("Xatolik: Videoni yuborishda muammo yuz berdi.");
     }
 };
 

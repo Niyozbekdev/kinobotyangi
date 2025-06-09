@@ -5,7 +5,7 @@ const { ADMIN_ID } = require('../../config/admin');
 const adminPanel = async (ctx) => {
     try {
         if (ctx.from.id !== ADMIN_ID) {
-            return ctx.reply('❌ Siz admin emassiz');
+            return ctx.reply(`❌ Kamanda yuborishda xatolik.`);
         }
 
         const user = await User.findOne({ user_id: ctx.from.id });
