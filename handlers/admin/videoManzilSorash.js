@@ -1,5 +1,6 @@
 // handlers/admin/videoManzilSo‘rash.js
 const VideoQabulState = require('../../models/VideoQabulState');
+const AdminState = require('../../models/AdminState');
 const { ADMIN_ID } = require('../../config/admin');
 
 /**
@@ -10,6 +11,8 @@ const videoManzilSoraladi = async (ctx) => {
     try {
         const userId = ctx.from.id;
         if (userId !== ADMIN_ID) return;
+
+        await AdminState.deleteOne({ admin_id: userId });
 
         // Stepni 'manzil_kiritish' ga o‘rnatamiz
         await VideoQabulState.findOneAndUpdate(

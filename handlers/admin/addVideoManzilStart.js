@@ -1,6 +1,7 @@
 // 📍 Video saqlash manzilini ko‘rsatish va pastiga o‘chirish tugmasi chiqarish
 
 const VideoQabulState = require('../../models/VideoQabulState');
+const AdminState = require('../../models/AdminState');
 const { ADMIN_ID } = require('../../config/admin');
 
 const showVideoManzil = async (ctx) => {
@@ -8,6 +9,7 @@ const showVideoManzil = async (ctx) => {
         const userId = ctx.from.id;
         if (userId !== ADMIN_ID) return;
         const state = await VideoQabulState.findOne({ admin_id: userId });
+        await AdminState.deleteOne({ admin_id: userId });
 
         if (!state || !state.qabul_manzil) {
             return await ctx.reply("❗️Hozircha hech qanday manzil belgilanmagan.");

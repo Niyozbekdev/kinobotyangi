@@ -39,10 +39,10 @@ const handleStart = async (ctx) => {
                 })
             }
 
-            userVideo.step = null;
-            await userVideo.save();
-
-
+            if (userVideo) {
+                userVideo.step = null;
+                await userVideo.save();
+            }
 
             return ctx.reply(`🏠 Bosh menyuga qaytdingiz: ` + ctx.chat.first_name, boshMenyu());
         } else {
@@ -54,7 +54,6 @@ const handleStart = async (ctx) => {
                 first_name,
                 user_number: total + 1,
                 joined_date: today,
-                last_active_at: today,
                 referrer_id: referrerId ? Number(referrerId) : null
             });
             await newUser.save();

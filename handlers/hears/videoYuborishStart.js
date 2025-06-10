@@ -24,8 +24,10 @@ const videoYuborishStart = async (ctx) => {
             { upsert: true }
         );
 
-        user.step = null;
-        await user.save();
+        if (user) {
+            user.step = null;
+            await user.save();
+        }
 
         await ctx.reply('📥 Endi video yuborishingiz mumkin!');
     } catch (err) {

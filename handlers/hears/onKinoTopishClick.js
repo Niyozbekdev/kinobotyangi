@@ -9,8 +9,6 @@ const onKinoTopishClick = async (ctx) => {
 
         const user = await User.findOne({ user_id: userId });
 
-        const userVideo = await UserVideoYuborish.findOne({ user_id: userId });
-
         if (!user || !user.phone_number) {
             return ctx.reply("❗️Botdan toliq foydalanish uchun raqamingizni yuboring", {
                 reply_markup: {
@@ -30,13 +28,18 @@ const onKinoTopishClick = async (ctx) => {
         // Raqam bor, davom etamiz
         await User.findOneAndUpdate(
             { user_id: userId },
-            { step: "waiting_for_codd", updated_at: new Date() },
-            { upsert: true },
-            { last_active_at: today }
+            {
+                step: "waiting_for_codd", updated_at: new Date(),
+                last_active_at: today
+            },
+            { upsert: true }
         );
 
-        userVideo.step = null;
-        await userVideo.save();
+        const userVideo = await UserVideoYuborish.findOne({ user_id: userId });
+        if (userVideo) {
+            userVideo.step = null;
+            await userVideo.save();
+        }
 
         return ctx.reply("🎬 Kino kodini kiriting:");
     } catch (err) {

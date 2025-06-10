@@ -1,4 +1,5 @@
 const Channel = require('../../models/Channel');
+const AdminState = require('../../models/AdminState');
 const { Markup } = require('telegraf');
 const { ADMIN_ID } = require('../../config/admin');
 
@@ -6,6 +7,8 @@ const showChannelList = async (ctx) => {
     try {
         const admin_id = ctx.from.id;
         if (admin_id !== ADMIN_ID) return;
+
+        await AdminState.deleteOne({ admin_id: admin_id })
 
         const channels = await Channel.find();
 
