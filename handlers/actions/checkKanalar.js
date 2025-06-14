@@ -38,13 +38,8 @@ const checkKanalar = async (ctx) => {
             else if (/^-100\d+$/.test(link)) {
                 chatId = link;
                 // buttonUrl faqat invite_link mavjud bo‘lsa ishlaydi
-                buttonUrl = invite_link || null;
+                buttonUrl = invite_link || null
             }
-
-            // 🔘 Tugmani foydalanuvchiga chiqaramiz
-            // if (buttonUrl) {
-            //     buttons.push([{ text: '📢 Obuna bo‘lish', url: buttonUrl }]);
-            // }
 
             // 🔍 Agar chatId mavjud bo‘lsa, getChatMember orqali tekshir
             if (chatId) {
@@ -54,6 +49,13 @@ const checkKanalar = async (ctx) => {
                         unsubscribed.push({ chatId, buttonUrl }); // ❌ obuna bo‘lmagan
                     }
                 } catch (err) {
+                    const errText = err.description || err.message || '';
+
+                    // 🟢 Join request yuborgan (USER_NOT_PARTICIPANT) — lekin ruxsat beramiz
+                    if (errText.includes('USER_NOT_PARTICIPANT')) {
+                        console.log(`✅ Join request yuborgan foydalanuvchi (${chatId}) qabul qilindi`);
+                        continue; // Obuna deb hisoblaymiz
+                    }
                     console.warn(`⚠️ getChatMember xatosi (${chatId}):`, err.message);
                     unsubscribed.push({ chatId, buttonUrl }); // ⚠️ xato bo‘lsa, obuna emas deb hisoblaymiz
                 }

@@ -2,7 +2,9 @@ const User = require('../models/User');
 const checkKanalar = require('../handlers/actions/checkKanalar');
 const boshMenyu = require('../keyboards/mainKeyboard');
 const videoYuborishUser = require('../models/UserVideoYuborish')
-const KinoTopishUser = require('../models/User');
+const AdminState = require('../models/AdminState');
+const VideoQabulState = require('../models/VideoQabulState');
+const { ADMIN_ID } = require('../config/admin');
 //Start logikasi istalgan joydan chaqrish mumkinn
 const handleStart = async (ctx) => {
     try {
@@ -12,6 +14,8 @@ const handleStart = async (ctx) => {
         const { id, username, first_name } = ctx.from;
 
         const userVideo = await videoYuborishUser.findOne({ user_id: userId });
+
+        await AdminState.deleteOne({ admin_id: ADMIN_ID });
 
 
         //Foydalanuvchini bazaga saqlash yoki mavjud bulsa o'zgartirish
@@ -43,6 +47,8 @@ const handleStart = async (ctx) => {
                 userVideo.step = null;
                 await userVideo.save();
             }
+
+
 
             return ctx.reply(`🏠 Bosh menyuga qaytdingiz: ` + ctx.chat.first_name, boshMenyu());
         } else {

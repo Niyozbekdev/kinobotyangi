@@ -23,7 +23,7 @@ const xabarYuborishniBoshlash = async (ctx) => {
             { upsert: true }
         );
 
-        await ctx.reply("📢 Yubormoqchi bo‘lgan xabaringizni yuboring (matn, rasm yoki video):");
+        await ctx.reply(`📤 Yubormoqchi bo‘lgan xabaringizni yuboring. \n\n 📝 Matn\n 🏞️ Rasm\n 🎞️ Video`);
 
     } catch (err) {
         console.error("❌ xabarYuborishniBoshlash xatosi:", err.message);

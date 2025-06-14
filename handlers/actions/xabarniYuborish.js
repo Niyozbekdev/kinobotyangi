@@ -14,9 +14,20 @@ const xabarniYuborish = async (ctx) => {
         const users = await User.find({ is_blocked: false });
         const { temp_title, temp_file_id, temp_button_text, temp_button_url } = state;
 
+        const messageText = temp_title?.trim() || "Yangi xabar";
+
         let yuborildi = 0;
         let yuborilmadi = 0;
 
+        //Matnli xabarlar uchun
+        const messageOpts = {
+            parse_mode: 'HTML',
+            reply_markup: temp_button_text && temp_button_url ? {
+                inline_keyboard: [[{ text: temp_button_text, url: temp_button_url }]]
+            } : undefined
+        }
+
+        //Video rasm uchun 
         const opts = {
             caption: temp_title,
             parse_mode: 'HTML',
@@ -28,12 +39,12 @@ const xabarniYuborish = async (ctx) => {
         for (const user of users) {
             try {
                 let sentMsg;
-                if (temp_file_id && temp_file_id.startsWith('AgAC') || temp_file_id.startsWith('CQAC')) {
+                if (temp_file_id && (temp_file_id.startsWith('AgAC') || temp_file_id.startsWith('CQAC'))) {
                     sentMsg = await ctx.telegram.sendPhoto(user.user_id, temp_file_id, opts);
                 } else if (temp_file_id) {
                     sentMsg = await ctx.telegram.sendVideo(user.user_id, temp_file_id, opts);
                 } else {
-                    sentMsg = await ctx.telegram.sendMessage(user.user_id, temp_title, opts);
+                    sentMsg = await ctx.telegram.sendMessage(user.user_id, messageText, messageOpts);
                 }
 
                 //Message idni saqlaymiz
