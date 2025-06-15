@@ -10,7 +10,7 @@ const { ADMIN_ID } = require('../../config/admin');
 const videoManzilSoraladi = async (ctx) => {
     try {
         const userId = ctx.from.id;
-        if (userId !== ADMIN_ID) return;
+        if (!ADMIN_ID.includes(ctx.from.id)) return;
 
         await AdminState.deleteOne({ admin_id: userId });
 

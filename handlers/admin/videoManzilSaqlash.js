@@ -11,7 +11,7 @@ const { ADMIN_ID } = require('../../config/admin');
 const videoManzilSaqlanadi = async (ctx) => {
     try {
         const admin_id = ctx.from.id;
-        if (admin_id !== ADMIN_ID) return;
+        if (!ADMIN_ID.includes(ctx.from.id)) return;
         let text = ctx.message?.text?.trim();
 
         if (!text) {

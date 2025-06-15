@@ -4,7 +4,7 @@ const { ADMIN_ID } = require('../../config/admin');
 const addKinoStart = async (ctx) => {
     try {
 
-        if (ctx.from.id !== ADMIN_ID) return;
+        if (!ADMIN_ID.includes(ctx.from.id)) return;
 
         await AdminState.findOneAndUpdate(
             { admin_id: ctx.from.id },

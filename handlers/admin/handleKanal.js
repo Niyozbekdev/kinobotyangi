@@ -39,7 +39,11 @@ const saveChannelLink = async (ctx) => {
         const isFullLink = link.startsWith('https://t.me/');                  // t.me/kanal
         const isChatId = /^-100\d+$/.test(link);                              // chat ID
         const isTelegram = isInviteLink || isUsername || isFullLink || isChatId;
-        //const isOtherPlatform = /instagram\.com|youtube\.com|youtu\.be/.test(link);
+        const isOtherPlatform = link.startsWith('https://');
+
+        if (!isTelegram && !isOtherPlatform) {
+            return ctx.reply("❗️Yuborgan xabaringiz link emas.")
+        }
 
         // 1️⃣ Private Telegram kanal — invite link
         if (isInviteLink) {
@@ -54,6 +58,40 @@ const saveChannelLink = async (ctx) => {
             await state.save();
 
             return ctx.reply("ℹ️ Bu -100... ID formatdagi kanal. Iltimos, doimiy invite linkini ham yuboring (https://t.me/+...).");
+
+            //Bu botni uzi yaratadi invate linkni 
+            // try {
+            //     const chatId = link;
+
+            //     // 1️⃣ Bot kanalga admin bo‘lishi shart, shunda getChat ishlaydi
+            //     const chat = await ctx.telegram.getChat(chatId);
+            //     const title = chat.title;
+            //     const realId = chat.id;
+
+            //     // 2️⃣ Yangi taklif (invite) link yaratamiz — doimiy bo'lishi uchun creates_join_request: true emas
+            //     const invite = await ctx.telegram.createChatInviteLink(chatId, {
+            //         expire_date: null, // doimiy bo‘lishi uchun muddatsiz
+            //         creates_join_request: true // oddiy link, auto-approve
+            //     });
+
+            //     // 3️⃣ Bazaga saqlaymiz
+            //     await Channel.create({
+            //         number,
+            //         link: chatId, // bu original -100... id
+            //         invite_link: invite.invite_link,
+            //         chat_id: realId,
+            //         title,
+            //         added_by: adminId,
+            //         added_at: new Date()
+            //     });
+
+            //     await AdminState.deleteOne({ admin_id: adminId });
+
+            //     return ctx.reply(`✅ Private kanal saqlandi: ${title}\n🔗 ${invite.invite_link}`);
+            // } catch (err) {
+            //     console.error("❌ Kanal ID bo‘yicha xatolik:", err.message);
+            //     return ctx.reply("❗️Xatolik: kanal mavjud emas yoki bot admin emas.");
+            // }
         }
 
         // 3️⃣ @kanal yoki https://t.me/kanal — Telegram public kanal
@@ -87,7 +125,7 @@ const saveChannelLink = async (ctx) => {
         }
 
         // 4️⃣ Boshqa platformalar (Instagram, YouTube, ...)
-        if (!isTelegram) {
+        if (isOtherPlatform) {
             await Channel.create({
                 number,
                 link,

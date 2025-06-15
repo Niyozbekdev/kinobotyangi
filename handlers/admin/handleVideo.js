@@ -4,7 +4,7 @@ const { ADMIN_ID } = require('../../config/admin');
 const videoHandler = async (ctx) => {
     try {
         const userId = ctx.from.id;
-        if (userId !== ADMIN_ID) return;
+        if (!ADMIN_ID.includes(ctx.from.id)) return;
 
         const state = await AdminState.findOne({ admin_id: userId });
 

@@ -13,14 +13,14 @@ const onText = async (ctx) => {
         const msg = ctx.message;
         if (!msg) return;
         const userId = ctx.from.id;
-        const adminId = ADMIN_ID
 
         const videoManzilState = await VideoQabulState.findOne({ admin_id: userId });
 
         const userVideoQabulstate = await UserVideoYuborishState.findOne({ user_id: userId });
 
         // Adminmi? Har doim tekshiramiz
-        const isAdmin = String(userId) === String(adminId);
+        const isAdmin = ADMIN_ID.includes(userId)
+
         const adminState = await AdminState.findOne({ admin_id: userId });
 
 

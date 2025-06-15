@@ -50,7 +50,7 @@ const adminText = async (ctx) => {
             return await saveChanelInvate(ctx);
         }
 
-        if ((msg.text || msg.photo || msg.video) && state?.step === 'xabar_kutilmoqda') {
+        if ((msg.text || msg.photo || msg.video || msg.video_note) && state?.step === 'xabar_kutilmoqda') {
             return await xabarniQabulQilish(ctx);
         }
         if (msg.text && state?.step === 'awaiting_button_text') {

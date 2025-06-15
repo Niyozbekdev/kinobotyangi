@@ -4,7 +4,7 @@ const { ADMIN_ID } = require('../../config/admin');
 
 const adminPanel = async (ctx) => {
     try {
-        if (ctx.from.id !== ADMIN_ID) {
+        if (!ADMIN_ID.includes(ctx.from.id)) {
             return ctx.reply(`❌ Kamanda yuborishda xatolik.`);
         }
 

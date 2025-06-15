@@ -30,10 +30,10 @@ const xabarniQabulQilish = async (ctx) => {
         await state.save();
 
         // Inline tugma kerakmi deb so‘raymiz
-        await ctx.reply('🔘 Inline tugma qo‘shmoqchimisiz?', {
+        await ctx.reply('🔘Tugma qo‘shmoqchimisiz?', {
             reply_markup: {
                 inline_keyboard: [
-                    [{ text: '➕ Ha', callback_data: 'br_addbtn' }],
+                    [{ text: '✅ Ha', callback_data: 'br_addbtn' }],
                     [{ text: '❌ Yo‘q', callback_data: 'br_nobtn' }]
                 ]
             }

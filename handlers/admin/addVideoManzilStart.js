@@ -7,7 +7,7 @@ const { ADMIN_ID } = require('../../config/admin');
 const showVideoManzil = async (ctx) => {
     try {
         const userId = ctx.from.id;
-        if (userId !== ADMIN_ID) return;
+        if (!ADMIN_ID.includes(ctx.from.id)) return;
         const state = await VideoQabulState.findOne({ admin_id: userId });
         await AdminState.deleteOne({ admin_id: userId });
 

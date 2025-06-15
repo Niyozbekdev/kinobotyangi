@@ -63,9 +63,8 @@ const userText = async (ctx) => {
             const randomBetween = (min, max) => {
                 return Math.floor(Math.random() * (max - min + 1)) + min;
             };
-
-            const viewsa = randomBetween(1000, 9999);
             const downloads = randomBetween(500, 5000)
+            const viewsa = downloads + randomBetween(1000, 9999);
             try {
                 await ctx.replyWithVideo(kino.file_id, { // bu yerga haqiqiy file_id kiriting
                     caption: `👤Siz uchun tayyor.\n\n👁Ko'rishlar:${viewsa}\n⬇️Yuklashlar: ${downloads}\n🤖 Bizning bot: @Kino24bor_bot`,

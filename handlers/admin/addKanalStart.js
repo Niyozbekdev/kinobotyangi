@@ -4,8 +4,7 @@ const { ADMIN_ID } = require('../../config/admin');
 
 const addKanalStart = async (ctx) => {
     try {
-        const admin_id = ctx.from.id;
-        if (admin_id !== ADMIN_ID) return;
+        if (!ADMIN_ID.includes(ctx.from.id)) return;
         // Admin holatini yangilash
         await AdminState.findOneAndUpdate(
             { admin_id: ctx.from.id },             // Admin ID
@@ -14,7 +13,7 @@ const addKanalStart = async (ctx) => {
         );
 
         // Admindan kanal linkini so‘rash
-        ctx.reply('📎Kanal username yoki linkni yuboring (masalan: @mychannel yoki https://t.me/joinchat/XXXX)');
+        ctx.reply(`📥 Kanal yoki guruh malumotini shu tarzda yuboring. \n\n 📢 @mychannel\n 🖇 https://t.me/joinchat/XXXX\n 🆔 -100(kanal yoki guruh IDsi)`);
     } catch (err) {
         console.error("Addkanalstart faylda xato bot", err)
     }

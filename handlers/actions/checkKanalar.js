@@ -11,7 +11,9 @@ const checkKanalar = async (ctx) => {
         const userId = ctx.from.id;
 
         // 🔓 Admin bo‘lsa tekshiruvdan o‘tmaydi
-        if (String(userId) === String(ADMIN_ID)) return true;
+        if (ADMIN_ID.includes(userId)) {
+            return true
+        }
 
         const channels = await Channel.find();
         const unsubscribed = [];
@@ -40,6 +42,11 @@ const checkKanalar = async (ctx) => {
                 // buttonUrl faqat invite_link mavjud bo‘lsa ishlaydi
                 buttonUrl = invite_link || null
             }
+            //Boshqa platformalar tekshirilmaydi lekin tugma sifatida chiqadi userga
+            else if (link?.startsWith('https://')) {
+                buttons.push([{ text: '📢 Obuna bo‘lish', url: link }]);
+            };
+
 
             // 🔍 Agar chatId mavjud bo‘lsa, getChatMember orqali tekshir
             if (chatId) {
@@ -68,6 +75,7 @@ const checkKanalar = async (ctx) => {
                 if (u.buttonUrl) {
                     buttons.push([{ text: '📢 Obuna bo‘lish', url: u.buttonUrl }]);
                 }
+
             }
             buttons.push([{ text: '✅ Tekshirish', callback_data: 'check_subscription' }]);
 
