@@ -4,6 +4,9 @@ const bot = require('./bot');
 (async () => {
 
     await connectDB();   // Mongo bazaga ulanadi
-    bot.launch();       // Bot endi ishga tushadi
+    //Webhookni tozalash
+    bot.telegram.deleteWebhook().then(() => {
+        bot.launch();       // Bot endi ishga tushadi polling rejmida
+    })
 
 })();

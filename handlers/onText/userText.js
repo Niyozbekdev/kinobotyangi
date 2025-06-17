@@ -67,7 +67,7 @@ const userText = async (ctx) => {
             const viewsa = downloads + randomBetween(1000, 9999);
             try {
                 await ctx.replyWithVideo(kino.file_id, { // bu yerga haqiqiy file_id kiriting
-                    caption: `👤Siz uchun tayyor.\n\n👁Ko'rishlar:${viewsa}\n⬇️Yuklashlar: ${downloads}\n🤖 Bizning bot: @Kino24bor_bot`,
+                    caption: `👤Siz uchun tayyor.\n\n👁Ko'rishlar:${viewsa}\n⬇️Yuklashlar: ${downloads}\n🤖 Bizning bot: @KinoManyaUz_bot`,
                     parse_mode: 'HTML', // oddiy format (MarkdownV2 emas!)
                     supports_streaming: true,
                     reply_markup: {
