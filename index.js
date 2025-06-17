@@ -1,4 +1,4 @@
-const http = require('http');
+
 const connectDB = require('./utils/connectDB');
 const bot = require('./bot');
 
@@ -6,9 +6,5 @@ const bot = require('./bot');
 
     await connectDB();   // Mongo bazaga ulanadi
     bot.launch();       // Bot endi ishga tushadi polling rejmida
-
-    http.createServer((req, res) => {
-        res.writeHead(200)
-    }).listen(process.env.Port || 3001);
 
 })();
