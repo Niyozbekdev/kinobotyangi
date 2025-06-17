@@ -85,7 +85,7 @@ const handleStart = async (ctx) => {
         if (!tekshirKanal) return;
 
     } catch (err) {
-        if (error.code === 403)
+        if (err.code === 403)
             console.error("HandlerStartda", err)
     }
 
