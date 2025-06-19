@@ -9,17 +9,18 @@ const onKinoTopishClick = async (ctx) => {
 
         const user = await User.findOne({ user_id: userId });
 
-        if (!user || !user.phone_number) {
-            return ctx.reply("❗️Botdan toliq foydalanish uchun raqamingizni yuboring", {
-                reply_markup: {
-                    keyboard: [
-                        [{ text: "📲 Raqamni yuborish", request_contact: true }]
-                    ],
-                    resize_keyboard: true,
-                    one_time_keyboard: true
-                }
-            });
-        }
+        //Telfon raqami bulsa ruxsat beradi bulmasa yuq
+        // if (!user || !user.phone_number) {
+        //     return ctx.reply("❗️Botdan toliq foydalanish uchun raqamingizni yuboring", {
+        //         reply_markup: {
+        //             keyboard: [
+        //                 [{ text: "📲 Raqamni yuborish", request_contact: true }]
+        //             ],
+        //             resize_keyboard: true,
+        //             one_time_keyboard: true
+        //         }
+        //     });
+        // }
         const tekshirKanal = await checkKanalar(ctx);
         if (!tekshirKanal) return;
         //Bu user har safar kino topishni bosganda oxirgi faolik yangilanadi

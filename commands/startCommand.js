@@ -27,22 +27,22 @@ const handleStart = async (ctx) => {
             await tekshirishUser.save();
 
             // Telfon raqami yuq buladigan bulsa suraladi
-            if (!tekshirishUser.phone_number) {
-                return ctx.reply("📲 Botdan toliq foydalanish uchun raqamingizni yuboring", {
-                    reply_markup: {
-                        keyboard: [
-                            [
-                                {
-                                    text: "📲 Raqamni yuborish",
-                                    request_contact: true
-                                }
-                            ]
-                        ],
-                        resize_keyboard: true,
-                        one_time_keyboard: true
-                    }
-                })
-            }
+            // if (!tekshirishUser.phone_number) {
+            //     return ctx.reply("📲 Botdan toliq foydalanish uchun raqamingizni yuboring", {
+            //         reply_markup: {
+            //             keyboard: [
+            //                 [
+            //                     {
+            //                         text: "📲 Raqamni yuborish",
+            //                         request_contact: true
+            //                     }
+            //                 ]
+            //             ],
+            //             resize_keyboard: true,
+            //             one_time_keyboard: true
+            //         }
+            //     })
+            // }
 
             if (userVideo) {
                 userVideo.step = null;
@@ -65,20 +65,20 @@ const handleStart = async (ctx) => {
             });
             await newUser.save();
 
-            return ctx.reply(`👋 Assalomu alaykum, ${first_name}\n ❗️Botdan toliq foydalanish uchun raqamingizni yuboring.`, {
-                reply_markup: {
-                    keyboard: [
-                        [
-                            {
-                                text: "📲 Raqamni yuborish",
-                                request_contact: true
-                            }
-                        ]
-                    ],
-                    resize_keyboard: true,
-                    one_time_keyboard: true
-                }
-            });
+            // return ctx.reply(`👋 Assalomu alaykum, ${first_name}\n ❗️Botdan toliq foydalanish uchun raqamingizni yuboring.`, {
+            //     reply_markup: {
+            //         keyboard: [
+            //             [
+            //                 {
+            //                     text: "📲 Raqamni yuborish",
+            //                     request_contact: true
+            //                 }
+            //             ]
+            //         ],
+            //         resize_keyboard: true,
+            //         one_time_keyboard: true
+            //     }
+            // });
         }
 
         const tekshirKanal = await checkKanalar(ctx);
