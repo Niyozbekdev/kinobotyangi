@@ -10,34 +10,44 @@ const { ADMIN_ID } = require('../../config/admin');
 const clearMessages = async (ctx) => {
     try {
         const userId = ctx.from.id;
-        if (!ADMIN_ID.includes(ctx.from.id)) return;
+        if (!ADMIN_ID.includes(userId)) return;
 
-        await AdminState.deleteOne({ admin_id: userId })
+        await AdminState.deleteOne({ admin_id: userId });
 
-        const all = await SentMessage.find({});
-        let count = 0;
-        let noCount = 0;
+        const allMessages = await SentMessage.find({});
+        let deletedCount = 0;
+        let failedCount = 0;
 
-        for (const msg of all) {
+        const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+
+        for (let i = 0; i < allMessages.length; i++) {
+            const msg = allMessages[i];
+
             try {
                 await ctx.telegram.deleteMessage(msg.user_id, msg.message_id);
-                count++;
+                await SentMessage.deleteOne({ _id: msg._id });
+                deletedCount++;
             } catch (err) {
-                console.log(`❌ O‘chirilmadi: ${msg.user_id}, msg_id: ${msg.message_id}`);
-                noCount++;
+                failedCount++;
+
+                if (err.code === 400) {
+                    console.log(`⚠️ Xatolik (400 - noto‘g‘ri so‘rov): ${msg.user_id}, msg_id: ${msg.message_id}`);
+                } else if (err.code === 403) {
+                    console.log(`⛔️ Foydalanuvchi botni bloklagan: ${msg.user_id}`);
+                } else {
+                    console.log(`❌ O‘chirilmadi: ${msg.user_id}, msg_id: ${msg.message_id}, error: ${err.message}`);
+                }
+            }
+
+            // Har 25 ta so‘rovdan keyin 1 sekund delay
+            if (i % 25 === 0) {
+                await delay(1000);
             }
         }
 
-        // Bazani tozalash
-        await SentMessage.deleteMany({});
-
-        await ctx.reply(
-            `🧼 Xabarlar tozalandi.\n\n` +
-            `✅ O‘chirildi: ${count} ta\n` +
-            `❌ O‘chirilmadi: ${noCount} ta`
-        );
+        await ctx.reply(`🧼 Xabarlar tozalandi.\n\n✅ O‘chirildi: ${deletedCount} ta\n❌ O‘chirilmadi: ${failedCount} ta`);
     } catch (err) {
-        console.error('❌ clearMessages xatosi:', err.message);
+        console.error('❌ clearMessages xatosi:', err);
         await ctx.reply('❌ Xatolik: xabarlarni tozalash muvaffaqiyatsiz tugadi.');
     }
 };
