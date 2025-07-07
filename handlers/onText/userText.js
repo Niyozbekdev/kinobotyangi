@@ -69,6 +69,7 @@ const userText = async (ctx) => {
                 await ctx.replyWithVideo(kino.file_id, { // bu yerga haqiqiy file_id kiriting
                     caption: `👤Siz uchun tayyor.\n\n👁Ko'rishlar:${viewsa}\n⬇️Yuklashlar: ${downloads}\n🤖 Bizning bot: @KinoManyaUz_bot`,
                     parse_mode: 'HTML', // oddiy format (MarkdownV2 emas!)
+                    protect_content: true,
                     supports_streaming: true,
                     reply_markup: {
                         inline_keyboard: [
