@@ -31,11 +31,11 @@ const clearMessages = async (ctx) => {
                 failedCount++;
 
                 if (err.code === 400) {
-                    console.log(`⚠️ Xatolik (400 - noto‘g‘ri so‘rov): ${msg.user_id}, msg_id: ${msg.message_id}`);
+                    //console.log(`⚠️ Xatolik (400 - noto‘g‘ri so‘rov): ${msg.user_id}, msg_id: ${msg.message_id}`);
                 } else if (err.code === 403) {
-                    console.log(`⛔️ Foydalanuvchi botni bloklagan: ${msg.user_id}`);
+                    //console.log(`⛔️ Foydalanuvchi botni bloklagan: ${msg.user_id}`);
                 } else {
-                    console.log(`❌ O‘chirilmadi: ${msg.user_id}, msg_id: ${msg.message_id}, error: ${err.message}`);
+                    //console.log(`❌ O‘chirilmadi: ${msg.user_id}, msg_id: ${msg.message_id}, error: ${err.message}`);
                 }
             }
 

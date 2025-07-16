@@ -8,6 +8,7 @@ const adminKeyboard = () => {
             ['➕ Kanal qo‘shish', '📋 Kanallar'],
             ['📢 Xabar yuborish', '🧼 Xabarlarni tozalash'],
             ['💾 Video qabul qilish', '📀 Manzil'],
+            ['👤 Foydalanuvchini o‘chirish'],
             ['📊 Statistika'],
             ['⬅️ Orqaga']
         ]).resize()

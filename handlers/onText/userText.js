@@ -8,17 +8,8 @@ const userText = async (ctx) => {
         const userId = ctx.from.id;
         const user = await User.findOne({ user_id: userId });
 
-
-        if (!user || !user.phone_number) {
-            return ctx.reply(`❗️ Botdan toliq foydalanish uchun raqamingizni yuboring.`, {
-                reply_markup: {
-                    keyboard: [
-                        [{ text: "📲 Raqamni yuborish", request_contact: true }]
-                    ],
-                    resize_keyboard: true,
-                    one_time_keyboard: true
-                }
-            });
+        if (!user) {
+            return ctx.reply('Siz yuqsiz')
         }
 
         const tekshirKanal = await checkKanalar(ctx);
@@ -60,14 +51,16 @@ const userText = async (ctx) => {
             kino.views += 1;
             await kino.save();
 
-            const randomBetween = (min, max) => {
-                return Math.floor(Math.random() * (max - min + 1)) + min;
-            };
-            const downloads = randomBetween(500, 5000)
-            const viewsa = downloads + randomBetween(1000, 9999);
+            // const randomBetween = (min, max) => {
+            //     return Math.floor(Math.random() * (max - min + 1)) + min;
+            // };
+            // const downloads = randomBetween(500, 5000)
+            // const viewsa = downloads + randomBetween(1000, 9999);
+
+            //⬇️Yuklashlar: ${downloads}
             try {
                 await ctx.replyWithVideo(kino.file_id, { // bu yerga haqiqiy file_id kiriting
-                    caption: `👤Siz uchun tayyor.\n\n👁Ko'rishlar:${viewsa}\n⬇️Yuklashlar: ${downloads}\n🤖 Bizning bot: @KinoManyaUz_bot`,
+                    caption: `👤Siz uchun tayyor.\n\n👁Ko'rishlar: ${kino.views}\n🤖 Bizning bot: @KinoManyaUz_bot`,
                     parse_mode: 'HTML', // oddiy format (MarkdownV2 emas!)
                     protect_content: true,
                     supports_streaming: true,

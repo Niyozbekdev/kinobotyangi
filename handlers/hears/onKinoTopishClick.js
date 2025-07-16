@@ -9,6 +9,8 @@ const onKinoTopishClick = async (ctx) => {
 
         const user = await User.findOne({ user_id: userId });
 
+
+
         //Telfon raqami bulsa ruxsat beradi bulmasa yuq
         // if (!user || !user.phone_number) {
         //     return ctx.reply("❗️Botdan toliq foydalanish uchun raqamingizni yuboring", {

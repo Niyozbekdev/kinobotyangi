@@ -16,8 +16,8 @@ bot.command('start', async (ctx) => {
     await handleStart(ctx);
 });
 
-const userContact = require('./handlers/onText/userContact')
-bot.on('contact', userContact);
+// const userContact = require('./handlers/onText/userContact')
+// bot.on('contact', userContact);
 
 
 //const checkKanalar = require('./midlwers/checkKanalar');
@@ -33,6 +33,7 @@ const adminPanel = require('./handlers/admin/adminPanel');
 const addKinoStart = require('./handlers/admin/addKinoStart');
 const deleteKinoStart = require('./handlers/admin/deleteKinoStart')
 const addKanalStart = require('./handlers/admin/addKanalStart');
+const addDeleteUser = require('./handlers/admin/addDeleteUser');
 const addStatistika = require('./handlers/admin/hisobotStart')
 //const orqagaClick = require('./handlers/hears/back');
 const orqagaAdmin = require('./handlers/hears/adminOrqagaStart');
@@ -55,8 +56,9 @@ bot.hears('📋 Kanallar', channelList);
 bot.hears('📢 Xabar yuborish', xabarYuborishniBoshlash);
 bot.hears('🧼 Xabarlarni tozalash', xabarlarniTozalash);
 bot.hears('💾 Video qabul qilish', videoManzilSoraladi);
-bot.hears('📀 Manzil', videoManzilKorsatish)
-bot.hears('📊 Statistika', addStatistika)
+bot.hears('📀 Manzil', videoManzilKorsatish);
+bot.hears('👤 Foydalanuvchini o‘chirish', addDeleteUser);
+bot.hears('📊 Statistika', addStatistika);
 bot.hears('⬅️ Orqaga', orqagaAdmin);
 
 bot.command('niyozbek', adminPanel);

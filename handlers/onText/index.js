@@ -1,7 +1,8 @@
 const userText = require('./userText');
 const adminText = require('./adminText');
 const AdminState = require('../../models/AdminState');
-const userContact = require('./userContact');
+//const userContact = require('./userContact');
+const handleDeleteUser = require('../admin/handleDeleteUser');
 const VideoQabulState = require('../../models/VideoQabulState');
 const videoManzilSaqlash = require('../admin/videoManzilSaqlash');
 const UserVideoYuborishState = require('../../models/UserVideoYuborish');
@@ -24,8 +25,11 @@ const onText = async (ctx) => {
         const adminState = await AdminState.findOne({ admin_id: userId });
 
 
-        if (msg.contact) {
-            return await userContact(ctx)
+        // if (msg.contact) {
+        //     return await userContact(ctx)
+        // }
+        if (isAdmin && msg.text && adminState?.step === 'awaiting_user_id_for_delete') {
+            return await handleDeleteUser(ctx)
         }
 
         if (isAdmin && msg.text && videoManzilState?.step === 'manzil_kiritish') {

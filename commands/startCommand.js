@@ -21,36 +21,26 @@ const handleStart = async (ctx) => {
 
         //Foydalanuvchini bazaga saqlash yoki mavjud bulsa o'zgartirish
         const tekshirishUser = await User.findOne({ user_id: userId });
-        if (tekshirishUser) {
+        if (!tekshirishUser) {
+            const total = await User.countDocuments();
+            const today = new Date().toISOString().split('T')[0];
+            const newUser = new User({
+                user_id: id,
+                username,
+                first_name,
+                user_number: total + 1,
+                joined_date: today,
+                referrer_id: referrerId ? Number(referrerId) : null
+            });
+            await newUser.save();
+        } else if (tekshirishUser) {
             tekshirishUser.status = 'active';
             tekshirishUser.is_blocked = false; //Bu foydalanuvchini blockdan chiqdi deb hisoblaydi
             await tekshirishUser.save();
-
-            // Telfon raqami yuq buladigan bulsa suraladi
-            // if (!tekshirishUser.phone_number) {
-            //     return ctx.reply("📲 Botdan toliq foydalanish uchun raqamingizni yuboring", {
-            //         reply_markup: {
-            //             keyboard: [
-            //                 [
-            //                     {
-            //                         text: "📲 Raqamni yuborish",
-            //                         request_contact: true
-            //                     }
-            //                 ]
-            //             ],
-            //             resize_keyboard: true,
-            //             one_time_keyboard: true
-            //         }
-            //     })
-            // }
-
             if (userVideo) {
                 userVideo.step = null;
                 await userVideo.save();
             }
-
-
-
             return ctx.reply(`🏠 Bosh menyuga qaytdingiz: ` + ctx.chat.first_name, boshMenyu());
         } else {
             const total = await User.countDocuments();
@@ -64,21 +54,6 @@ const handleStart = async (ctx) => {
                 referrer_id: referrerId ? Number(referrerId) : null
             });
             await newUser.save();
-
-            // return ctx.reply(`👋 Assalomu alaykum, ${first_name}\n ❗️Botdan toliq foydalanish uchun raqamingizni yuboring.`, {
-            //     reply_markup: {
-            //         keyboard: [
-            //             [
-            //                 {
-            //                     text: "📲 Raqamni yuborish",
-            //                     request_contact: true
-            //                 }
-            //             ]
-            //         ],
-            //         resize_keyboard: true,
-            //         one_time_keyboard: true
-            //     }
-            // });
         }
 
         const tekshirKanal = await checkKanalar(ctx);
