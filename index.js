@@ -11,7 +11,7 @@ const connectDB = require('./utils/connectDB');
 const bot = require('./bot');
 
 (async () => {
-
+ 
     await connectDB();   // Mongo bazaga ulanadi
     // ✅ GLOBAL XATO TUTUVCHI — bu joy muhim!
     bot.catch((err, ctx) => {
