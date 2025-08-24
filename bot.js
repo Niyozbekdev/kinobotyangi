@@ -26,16 +26,16 @@ bot.command('start', async (ctx) => {
 // Foydalanuvchi tugmalari (hears)
 const onKinoTopish = require('./handlers/hears/onKinoTopishClick');
 const onVideoYuborish = require('./handlers/hears/videoYuborishStart');
-// const boglanish = require('./handlers/hears/boglanish');
-// const ulashish = require('./handlers/hears/ulashish');
-// const darajam = require('./handlers/hears/darajam');
+const vipKanal = require('./handlers/hears/vipKanal');
+//const virtualKeks = require('./handlers/hears/virtualKeks');
+const userFile = require('./handlers/admin/exportUser');
 const adminPanel = require('./handlers/admin/adminPanel');
 const addKinoStart = require('./handlers/admin/addKinoStart');
 const deleteKinoStart = require('./handlers/admin/deleteKinoStart')
 const addKanalStart = require('./handlers/admin/addKanalStart');
 const addDeleteUser = require('./handlers/admin/addDeleteUser');
 const addStatistika = require('./handlers/admin/hisobotStart')
-//const orqagaClick = require('./handlers/hears/back');
+const saveImage = require('./commands/saveImage');
 const orqagaAdmin = require('./handlers/hears/adminOrqagaStart');
 const channelList = require('./handlers/admin/channelListStart')
 const xabarYuborishniBoshlash = require('./handlers/admin/xabarYuborishStart');
@@ -45,8 +45,8 @@ const videoManzilKorsatish = require('./handlers/admin/addVideoManzilStart');
 
 bot.hears('🎬 Kino topish', onKinoTopish);
 bot.hears('🎥 Video yuborish', onVideoYuborish);
-// bot.hears('📞 Bog‘lanish', boglanish);
-// bot.hears('📤 Ulashish', ulashish);
+bot.hears('➕ VIP kanal', vipKanal);
+//bot.hears('🎁 Virtual keks', virtualKeks);
 // bot.hears('📊 Darajam', darajam);
 //bot.hears('🛠 Admin bo‘limi', adminPanel);
 bot.hears('🎥 Kino qo‘shish', addKinoStart);
@@ -57,11 +57,15 @@ bot.hears('📢 Xabar yuborish', xabarYuborishniBoshlash);
 bot.hears('🧼 Xabarlarni tozalash', xabarlarniTozalash);
 bot.hears('💾 Video qabul qilish', videoManzilSoraladi);
 bot.hears('📀 Manzil', videoManzilKorsatish);
-bot.hears('👤 Foydalanuvchini o‘chirish', addDeleteUser);
 bot.hears('📊 Statistika', addStatistika);
+bot.hears('💾 Userlarni olish', userFile);
+bot.hears('📷 Vipsaqlash', saveImage)
+bot.hears('👤 Foydalanuvchini o‘chirish', addDeleteUser);
 bot.hears('⬅️ Orqaga', orqagaAdmin);
 
 bot.command('niyozbek', adminPanel);
+//bot.command('saveimage', saveImage)
+//bot.command('file', userFile)
 bot.command('kino', async (ctx) => {
     try {
         await onKinoTopish(ctx);

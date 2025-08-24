@@ -9,7 +9,7 @@ const userText = async (ctx) => {
         const user = await User.findOne({ user_id: userId });
 
         if (!user) {
-            return ctx.reply('Siz yuqsiz')
+            return ctx.reply(`Siz bazada yuqsiz xizmat ko'rsatilmaydi`)
         }
 
         const tekshirKanal = await checkKanalar(ctx);
