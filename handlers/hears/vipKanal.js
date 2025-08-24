@@ -13,10 +13,10 @@ const vipKanl = async (ctx) => {
             ctx.chat.id,
             images.map((img, i) => ({
                 type: "photo",
-                protect_content: true,
                 media: img.file_id,
                 caption: i === 0 ? "🎁 VIP kanalga qushilish uchun admin bilan bog'laning.\n✅ Kanalga videolar tashalib boriladi.\n💵 Eslatib o'taman kanal pullik.\n\n👤 Admin:  @King_2343" : undefined, // faqat 1-rasmga caption
-            }))
+            })),
+            { protect_content: true }
         );
         // await ctx.telegram.sendMediaGroup(ctx.chat.id, [
         //     { type: "photo", media: { source: file1 } },
