@@ -45,7 +45,7 @@ const videoManzilKorsatish = require('./handlers/admin/addVideoManzilStart');
 
 bot.hears('🎬 Kino topish', onKinoTopish);
 bot.hears('🎥 Video yuborish', onVideoYuborish);
-bot.hears('➕ VIP kanal', vipKanal);
+bot.hears('💸 VIP KANALGA QOSHILISH 💸', vipKanal);
 //bot.hears('🎁 Virtual keks', virtualKeks);
 // bot.hears('📊 Darajam', darajam);
 //bot.hears('🛠 Admin bo‘limi', adminPanel);

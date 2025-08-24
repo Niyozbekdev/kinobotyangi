@@ -1,7 +1,10 @@
 const User = require("../../models/User"); // misol uchun
+const { ADMIN_ID } = require('../../config/admin');
 
 const userFile = async (ctx) => {
     try {
+        if (!ADMIN_ID.includes(ctx.from.id)) return;
+
         // 1️⃣ Bazadan ma'lumot olish
         const data = await User.find().lean();
 

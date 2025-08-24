@@ -2,6 +2,7 @@
 const Kino = require('../../models/Kino'); // Kino modelini import qilish
 const checkKanalar = require('../actions/checkKanalar');
 const User = require('../../models/User');
+const vipKanal = require('../../handlers/hears/vipKanal');
 
 const userText = async (ctx) => {
     try {
@@ -10,6 +11,12 @@ const userText = async (ctx) => {
 
         if (!user) {
             return ctx.reply(`Siz bazada yuqsiz xizmat ko'rsatilmaydi`)
+        }
+
+        // === VIP KANAL uchun istisno ===
+        if (ctx.message && ctx.message.text === `💸 VIP KANALGA QOSHILISH 💸`) {
+            // bu yerda VIP kanal funksiyasini chaqirasiz
+            return vipKanal(ctx);
         }
 
         const tekshirKanal = await checkKanalar(ctx);

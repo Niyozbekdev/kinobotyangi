@@ -1,8 +1,11 @@
 const path = require('path');
 const Image = require('../models/imageSchema');
+const { ADMIN_ID } = require('../config/admin');
 
 const saveImage = async (ctx) => {
     try {
+        if (!ADMIN_ID.includes(ctx.from.id)) return;
+
         const images = ["rasm1.jpg", "rasm2.jpg", "rasm3.jpg"];
 
         for (const img of images) {
