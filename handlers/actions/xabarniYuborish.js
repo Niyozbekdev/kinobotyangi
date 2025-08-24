@@ -1,4 +1,4 @@
-const SentMessage = require('../../models/SendMessage');
+//const SentMessage = require('../../models/SendMessage');
 const AdminState = require('../../models/AdminState');
 const User = require('../../models/User');
 
@@ -54,10 +54,10 @@ const xabarniYuborish = async (ctx) => {
                     }
 
                     // 📌 Xabar ID ni saqlaymiz
-                    await SentMessage.create({
-                        user_id: users.user_id,
-                        message_id: sentMsg.message_id,
-                    });
+                    // await SentMessage.create({
+                    //     user_id: users.user_id,
+                    //     message_id: sentMsg.message_id,
+                    // });
 
                     yuborildi++;
                 } catch (err) {
