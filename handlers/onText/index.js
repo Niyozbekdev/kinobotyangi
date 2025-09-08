@@ -32,6 +32,7 @@ const onText = async (ctx) => {
             return await handleDeleteUser(ctx)
         }
 
+
         if (isAdmin && msg.text && videoManzilState?.step === 'manzil_kiritish') {
             return await videoManzilSaqlash(ctx)
         }

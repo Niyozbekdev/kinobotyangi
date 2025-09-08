@@ -35,7 +35,7 @@ const deleteKinoStart = require('./handlers/admin/deleteKinoStart')
 const addKanalStart = require('./handlers/admin/addKanalStart');
 const addDeleteUser = require('./handlers/admin/addDeleteUser');
 const addStatistika = require('./handlers/admin/hisobotStart')
-const saveImage = require('./commands/saveImage');
+const { startVipPost } = require('./commands/saveImage');
 const orqagaAdmin = require('./handlers/hears/adminOrqagaStart');
 const channelList = require('./handlers/admin/channelListStart')
 const xabarYuborishniBoshlash = require('./handlers/admin/xabarYuborishStart');
@@ -59,7 +59,7 @@ bot.hears('💾 Video qabul qilish', videoManzilSoraladi);
 bot.hears('📀 Manzil', videoManzilKorsatish);
 bot.hears('📊 Statistika', addStatistika);
 bot.hears('💾 Userlarni olish', userFile);
-bot.hears('📷 Vipsaqlash', saveImage)
+bot.hears('📷 Vipsaqlash', startVipPost)
 bot.hears('👤 Foydalanuvchini o‘chirish', addDeleteUser);
 bot.hears('⬅️ Orqaga', orqagaAdmin);
 

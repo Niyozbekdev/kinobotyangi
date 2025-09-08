@@ -11,6 +11,7 @@ module.exports = (bot) => {
         const brAddBtn = require('./brAddBtn');
         const brNotBtn = require('./brNotBtn');
         const deleteManzil = require('./mazilOchrish');
+        const { saveVipPost, cancelVipPost } = require('../../commands/saveImage')
 
         bot.action('delete_msg', deleteMsg);
         bot.action('delete_permanent', deletePermanentKino);
@@ -20,6 +21,8 @@ module.exports = (bot) => {
         bot.action('br_addbtn', brAddBtn);
         bot.action('br_nobtn', brNotBtn);
         bot.action('br_send', xabarniYuborish);
+        bot.action('vip_save', saveVipPost);
+        bot.action('vip_cancel', cancelVipPost);
         bot.action('ochir_video_manzil', deleteManzil)
         bot.action(/delete_channel_\d+/, deleteChannel)
 

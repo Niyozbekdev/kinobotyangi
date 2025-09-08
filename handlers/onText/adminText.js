@@ -10,6 +10,7 @@ const tugmaURLniQabulQilish = require('../admin/tugmaURLniQabulQilish');
 const AdminState = require('../../models/AdminState');
 const VideoQabulState = require('../../models/VideoQabulState');
 const videoManzilSaqlash = require('../admin/videoManzilSaqlash');
+const { handleVipPhoto } = require('../../commands/saveImage')
 
 const adminText = async (ctx) => {
     try {
@@ -58,6 +59,10 @@ const adminText = async (ctx) => {
         }
         if (msg.text && state?.step === 'awaiting_button_url') {
             return await tugmaURLniQabulQilish(ctx);
+        }
+
+        if (msg.photo && state?.step === 'vip_post') {
+            return await handleVipPhoto(ctx)
         }
 
 
