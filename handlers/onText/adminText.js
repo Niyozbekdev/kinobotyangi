@@ -8,6 +8,7 @@ const xabarniQabulQilish = require('../admin/xabarniQabulQilish');
 const tugmaMatniniQabulQilish = require('../admin/tugmaMatniQabulQilish');
 const tugmaURLniQabulQilish = require('../admin/tugmaURLniQabulQilish');
 const AdminState = require('../../models/AdminState');
+const VipAdminState = require('../../models/VipAdminSchema');
 const VideoQabulState = require('../../models/VideoQabulState');
 const videoManzilSaqlash = require('../admin/videoManzilSaqlash');
 const { handleVipPhoto } = require('../../commands/saveImage')
@@ -20,6 +21,7 @@ const adminText = async (ctx) => {
         if (!msg) return;
 
         const state = await AdminState.findOne({ admin_id: userId });
+        const vippost = await VipAdminState.findOne({ admin_id: userId })
         const videoQabulState = await VideoQabulState.findOne({ admin_id: userId });
 
         //Bu admin video manzil qayerga saqlanish kerakligini tekshirib oladi.
@@ -61,7 +63,7 @@ const adminText = async (ctx) => {
             return await tugmaURLniQabulQilish(ctx);
         }
 
-        if (msg.photo && state?.step === 'vip_post') {
+        if (msg.photo && vippost?.step === 'vip_post') {
             return await handleVipPhoto(ctx)
         }
 

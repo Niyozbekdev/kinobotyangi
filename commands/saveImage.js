@@ -1,29 +1,72 @@
-const AdminState = require('../models/AdminState'); // AdminState modelini import qilamiz
-const VipPost = require('../models/imageSchema');       // VipPost modelini import qilamiz
+const VipAdminState = require('../models/VipAdminSchema');   // ✅ faqat VIP uchun state
+const VipPost = require('../models/VipPost');               // ✅ saqlanadigan post modeli
 const { Markup } = require('telegraf');
 
-const MAX_IMAGES = 10; // Bir post uchun maksimal 10 ta rasm
+const MAX_IMAGES = 10;
+
+// 🔹 Media group (albom) vaqtinchalik cache
+const mediaGroupsCache = {};
+const MAX_CAPTION_LENGTH = 1024;
+
+// ⏳ Progress bar generatsiya qiluvchi funksiya
+// function makeProgressBar(total, remaining, length = 20) {
+//     const percent = (remaining / total);
+//     const filled = Math.round(length * percent);
+//     const empty = length - filled;
+//     return `[${"█".repeat(filled)}${"░".repeat(empty)}] ${remaining}s`;
 
 /**
- * Admin "VIP Post" tugmasini bosganda jarayonni boshlash
+ * 📤 Admin "VIP Post" tugmasini bosganda jarayonni boshlash
  */
 async function startVipPost(ctx) {
     try {
         const adminId = ctx.from.id;
 
-        // Admin uchun yangi state yaratamiz yoki mavjudini yangilaymiz
-        await AdminState.findOneAndUpdate(
+        // State yangilash yoki yaratish
+        await VipAdminState.findOneAndUpdate(
             { admin_id: adminId },
             {
-                step: 'vip_post',            // qadamni belgilaymiz
-                data: { images: [] },        // vaqtinchalik rasmlar saqlanadi
-                updated_at: new Date()
+                step: 'vip_post',
+                vip_post: [],
+                last_preview_msg_ids: [],
+                updated_at: new Date(),
+                expireAt: new Date(Date.now() + 60 * 1000) //Mudati yana 1 daqiqaga uzayadi
             },
             { upsert: true, new: true }
         );
 
-        // Admin’ga xabar yuboramiz
-        await ctx.reply('📤 VIP post yaratish boshlandi.\n➡️ 1–10 ta rasm yuboring.');
+        let msg = await ctx.reply(`📤 VIP post yaratish boshlandi.\n➡️ 10 tagacha rasm yuborishingiz mumkin undan ko'p bo'lsa hisoblanmaydi. \n\n ❗️Iltimos rasmga caption yozsangiz birinchi rasm tagiga yozing bo'lmasa qushilmaydi caption.`);
+
+        //Countdown
+        let remaining = 120;
+        const timer = setInterval(async () => {
+            remaining -= 5;
+            if (remaining > 0) {
+                try {
+                    await ctx.telegram.editMessageText(
+                        ctx.chat.id,
+                        msg.message_id,
+                        undefined,
+                        `📤 VIP post yaratish boshlandi. \n━━━━⏳ Qolgan vaqt: ${remaining} s━━━━\n➡️ 10 tagacha rasm yuborishingiz mumkin undan ko'p bo'lsa hisoblanmaydi. \n\n ❗️Iltimos rasmga caption yozsangiz birinchi rasm tagiga yozing bo'lmasa qushilmaydi caption.`
+                    );
+                } catch (err) {
+                    console.error("editMessageText error:", err.message);
+                }
+            } else {
+                clearInterval(timer);
+                try {
+                    await ctx.telegram.editMessageText(
+                        ctx.chat.id,
+                        msg.message_id,
+                        undefined,
+                        "🗣 Vaqt tugadi, VIP post yaratish bekor qilindi \n✅ Qayta urning."
+                    );
+                } catch (_) { }
+                // State ham tozalanadi
+                await VipAdminState.deleteOne({ admin_id: adminId });
+            }
+        }, 5000);
+
     } catch (err) {
         console.error('startVipPost error:', err);
         await ctx.reply('❌ Xatolik. Qayta urinib ko‘ring.');
@@ -31,201 +74,219 @@ async function startVipPost(ctx) {
 }
 
 /**
- * Admin rasm yuborganida ishlovchi funksiya
+ * 🖼 Admin rasm yuborganda
  */
 
-// Albomlarni vaqtincha yig‘ib turish uchun cache (RAM)
-// Global cache (albom rasmlarini vaqtincha yig‘ib turadi)
-const mediaGroupsCache = {};
 
-/**
- * Admin tomonidan yuborilgan rasmlarni qayta ishlash
- * - Bitta rasm bo‘lsa → oddiy photo preview
- * - Bir nechta rasm albom bo‘lsa → cache orqali faqat 1 marta preview
- */
 const handleVipPhoto = async (ctx) => {
     try {
         const userId = ctx.from.id;
         const photos = ctx.message.photo;
-
         if (!photos || photos.length === 0) return;
 
-        // Telegram eng katta sifatli rasmni oxirgi qilib yuboradi
         const fileId = photos[photos.length - 1].file_id;
-        const caption = ctx.message.caption || "";
+        const caption = ctx.message.caption || '';
         const mediaGroupId = ctx.message.media_group_id;
 
-        // AdminState olish
-        let state = await AdminState.findOne({ admin_id: userId });
-        if (!state) return;
+        // 🔎 Caption uzunligini tekshiramiz
+        if (caption.length > MAX_CAPTION_LENGTH) {
+            await ctx.reply(
+                `⚠️ Caption juda uzun(${caption.length} belgi).\nIltimos, ${MAX_CAPTION_LENGTH} belgidan kamroq matn yozing.`
+            );
+            return; // saqlamaymiz
+        }
 
-        // 1) Agar admin albom yuborgan bo‘lsa
+
+        //let state = await VipAdminState.findOne({ admin_id: userId });
+        let state = await VipAdminState.findOne({ admin_id: userId });
+        if (!state || state.step !== "vip_post") return;
+
+        // === Albom (media_group) holati ===
         if (mediaGroupId) {
-            // Cache ichida massiv yaratamiz (agar yo‘q bo‘lsa)
             if (!mediaGroupsCache[mediaGroupId]) {
-                mediaGroupsCache[mediaGroupId] = { images: [], timer: null, ctx, userId };
+                mediaGroupsCache[mediaGroupId] = { images: [], caption, ctx, userId, timer: null };
             }
 
-            // Rasmlarni cache massiviga qo‘shish
             mediaGroupsCache[mediaGroupId].images.push({ file_id: fileId, caption });
 
-            // Timer birinchi marta ishlaydi (takrorlanmaydi)
             if (!mediaGroupsCache[mediaGroupId].timer) {
+                // 1.5 soniyadan keyin albom to‘liq yig‘ilib preview chiqariladi
                 mediaGroupsCache[mediaGroupId].timer = setTimeout(async () => {
                     try {
-                        const { images, ctx, userId } = mediaGroupsCache[mediaGroupId];
+                        const { images, caption, ctx, userId } = mediaGroupsCache[mediaGroupId];
 
-                        // Agar 10 tadan oshsa, limit qo‘yamiz
-                        if (images.length > 10) {
-                            await ctx.reply("❌ Maksimal 10 ta rasm yuklashingiz mumkin.");
+                        if (images.length > MAX_IMAGES) {
+                            await ctx.reply('❌ Maksimal 10 ta rasm yuklashingiz mumkin.');
                             delete mediaGroupsCache[mediaGroupId];
                             return;
                         }
 
-                        // Avvalgi previewlarni o‘chirish
-                        if (state.data.last_preview_msg_ids) {
-                            for (let msgId of state.data.last_preview_msg_ids) {
-                                try {
-                                    await ctx.deleteMessage(msgId);
-                                } catch (_) { }
+                        // Oldingi preview’larni o‘chirish
+                        if (state.last_preview_msg_ids?.length) {
+                            for (let msgId of state.last_preview_msg_ids) {
+                                try { await ctx.deleteMessage(msgId); } catch (_) { }
                             }
                         }
 
-                        // Preview yuborish (albom ko‘rinishda)
+                        // Preview yuborish
                         const sentMessages = await ctx.replyWithMediaGroup(
                             images.map((img, idx) => ({
-                                type: "photo",
+                                type: 'photo',
                                 media: img.file_id,
-                                caption: idx === 0 ? "📸 VIP post preview\n\nUserlarga shunday ko‘rinadi." : undefined
+                                caption: idx === 0 ? caption : undefined
                             }))
                         );
 
-                        // Saqlash / Bekor tugmalari
+                        await ctx.reply(`👀 Foydalanuvchilarga 👆 shunaqa tarzda ko'rinadi.`)
                         const actionMessage = await ctx.reply(
-                            "✅ Agar tayyor bo‘lsa, VIP postni saqlang yoki bekor qiling.",
+                            '✅ Agar tayyor bo‘lsa, VIP postni saqlang yoki bekor qiling.',
                             Markup.inlineKeyboard([
-                                [Markup.button.callback("💾 Saqlash", "save_vip_post")],
-                                [Markup.button.callback("❌ Bekor qilish", "cancel_vip_post")]
+                                [Markup.button.callback('💾 Saqlash', 'vip_save')],
+                                [Markup.button.callback('❌ Bekor qilish', 'vip_cancel')]
                             ])
                         );
 
-                        // AdminState yangilash
-                        state.data.vip_post = images;
-                        state.data.last_preview_msg_ids = [
-                            ...sentMessages.map(m => m.message_id),
-                            actionMessage.message_id
-                        ];
-                        await state.save();
+                        // State yangilash
+                        await VipAdminState.updateOne(
+                            { admin_id: userId },
+                            {
+                                $set: {
+                                    vip_post: images.map((img, idx) => ({
+                                        file_id: img.file_id,
+                                        caption: idx === 0 ? caption : ''
+                                    })),
+                                    last_preview_msg_ids: [
+                                        ...sentMessages.map(m => m.message_id),
+                                        actionMessage.message_id
+                                    ],
+                                    updated_at: new Date()
+                                }
+                            }
+                        );
 
                     } catch (err) {
-                        console.error("Alb om previewda xatolik:", err);
-                        await ctx.reply("❌ Albom preview chiqarishda xatolik yuz berdi.");
+                        console.error('Albom preview xatolik:', err);
+                        await ctx.reply('❌ Albom preview chiqarishda xatolik yuz berdi.');
                     } finally {
-                        // Cache tozalash
                         delete mediaGroupsCache[mediaGroupId];
                     }
-                }, 1500); // 1.5s kutib, faqat 1 marta preview qiladi
+                }, 1500);
             }
+
+            // === Bitta rasm holati ===
         } else {
-            // 2) Agar admin faqat 1 ta rasm yuborgan bo‘lsa
-            // Avvalgi previewlarni o‘chirish
-            if (state.data.last_preview_msg_ids) {
-                for (let msgId of state.data.last_preview_msg_ids) {
-                    try {
-                        await ctx.deleteMessage(msgId);
-                    } catch (_) { }
+            if (state.last_preview_msg_ids?.length) {
+                for (let msgId of state.last_preview_msg_ids) {
+                    try { await ctx.deleteMessage(msgId); } catch (_) { }
                 }
             }
 
-            // Preview yuborish
-            const sentMessage = await ctx.replyWithPhoto(fileId, {
-                caption: "📸 VIP post preview\n\nUserlarga shunday ko‘rinadi."
-            });
+            const sentMessage = await ctx.replyWithPhoto(fileId, { caption });
 
-            // Saqlash / Bekor tugmalari
+            await ctx.reply(`👀 Foydalanuvchilarga 👆 shunaqa tarzda ko'rinadi.`)
             const actionMessage = await ctx.reply(
-                "✅ Agar tayyor bo‘lsa, VIP postni saqlang yoki bekor qiling.",
+                '✅ Agar tayyor bo‘lsa, VIP postni saqlang yoki bekor qiling.',
                 Markup.inlineKeyboard([
-                    [Markup.button.callback("💾 Saqlash", "save_vip_post")],
-                    [Markup.button.callback("❌ Bekor qilish", "cancel_vip_post")]
+                    [Markup.button.callback('💾 Saqlash', 'vip_save')],
+                    [Markup.button.callback('❌ Bekor qilish', 'vip_cancel')]
                 ])
             );
 
-            // AdminState yangilash
-            state.data.vip_post = [{ file_id: fileId, caption }];
-            state.data.last_preview_msg_ids = [sentMessage.message_id, actionMessage.message_id];
-            await state.save();
+            await VipAdminState.updateOne(
+                { admin_id: userId },
+                {
+                    $set: {
+                        vip_post: [{ file_id: fileId, caption }],
+                        last_preview_msg_ids: [sentMessage.message_id, actionMessage.message_id],
+                        updated_at: new Date()
+                    }
+                }
+            );
         }
 
     } catch (err) {
-        console.error("VIP photo xatolik:", err);
-        await ctx.reply("❌ Rasmni qayta yuboring. Xatolik yuz berdi.");
+        console.error('handleVipPhoto error:', err);
+        await ctx.reply('❌ Rasmni qayta yuboring. Xatolik yuz berdi.');
     }
 };
 
-
-
 /**
- * Admin "✅ Saqlash" tugmasini bosganda
+ * 💾 Saqlash tugmasi
  */
 async function saveVipPost(ctx) {
     try {
         const adminId = ctx.from.id;
-
-        // State ni olish
-        const state = await AdminState.findOne({ admin_id: adminId });
+        const state = await VipAdminState.findOne({ admin_id: adminId });
 
         if (!state || state.step !== 'vip_post') {
             await ctx.answerCbQuery('❌ Jarayon topilmadi.');
             return;
         }
 
-        const images = state.data.images || [];
-
+        const images = state.vip_post || [];
         if (images.length === 0) {
             await ctx.answerCbQuery('⚠️ Rasm yo‘q.');
             return;
         }
 
-        // Yangi VIP postni bazaga yozamiz
+        await VipPost.deleteMany({});
+        // Yangi VIP postni DB ga saqlash
         await VipPost.create({
             images,
             created_by: adminId,
             is_active: true
         });
 
-        // AdminState ni o‘chiramiz
-        await AdminState.deleteOne({ admin_id: adminId });
+        // State tozalash
+        await VipAdminState.deleteOne({ admin_id: adminId });
 
-        // Callback tugmasi xabarini o‘zgartiramiz
-        await ctx.editMessageText(`✅ VIP post saqlandi! 🖼 Rasm soni: ${images.length}`);
+        await ctx.editMessageText(`✅ VIP post saqlandi! \n🖼 Rasmlar soni: ${images.length}`);
+
     } catch (err) {
         console.error('saveVipPost error:', err);
-        await ctx.reply('❌ Saqlashda xatolik.');
+        await ctx.reply('❌ Saqlashda xatolik qaytadan urning.');
     }
 }
 
 /**
- * Admin "❌ Bekor qilish" tugmasini bosganda
+ * ❌ Bekor tugmasi
+ */
+/**
+ * ❌ Bekor tugmasi
  */
 async function cancelVipPost(ctx) {
     try {
         const adminId = ctx.from.id;
 
-        // AdminState ni o‘chiramiz
-        await AdminState.deleteOne({ admin_id: adminId });
+        // State’ni topamiz
+        const state = await VipAdminState.findOne({ admin_id: adminId });
 
-        // Callback tugmasi xabarini o‘zgartiramiz
-        await ctx.editMessageText('🚫 VIP post yaratish bekor qilindi.');
+        // Agar preview xabarlar bo‘lsa → o‘chirib tashlaymiz
+        if (state?.last_preview_msg_ids?.length) {
+            for (let msgId of state.last_preview_msg_ids) {
+                try {
+                    await ctx.deleteMessage(msgId);
+                } catch (err) {
+                    console.error(`❌ Xabarni o‘chirishda xatolik (msgId=${msgId}):`, err);
+                }
+            }
+        }
+
+        // State’ni tozalash
+        await VipAdminState.deleteOne({ admin_id: adminId });
+
+        // Callback tugmani o‘zgartirish (agar edit qilish imkoni bo‘lsa)
+        try {
+            await ctx.editMessageText('🚫 VIP post yaratish bekor qilindi.');
+        } catch {
+            // Agar tugma xabari allaqachon o‘chirilgan bo‘lsa → oddiy reply yuboramiz
+            await ctx.reply('🚫 VIP post yaratish bekor qilindi.');
+        }
+
     } catch (err) {
         console.error('cancelVipPost error:', err);
         await ctx.reply('❌ Bekor qilishda xatolik.');
     }
 }
 
-module.exports = {
-    startVipPost,
-    handleVipPhoto,
-    saveVipPost,
-    cancelVipPost
-};
+module.exports = { startVipPost, handleVipPhoto, saveVipPost, cancelVipPost };
