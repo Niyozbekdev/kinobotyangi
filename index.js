@@ -1,11 +1,14 @@
 // ✅ Global xatoliklarni tutib, crashdan saqlaydi
 process.on("uncaughtException", (err) => {
     console.error("❌ Kutilmagan xatolik (uncaughtException):", err.message);
+    process.exit(1);
 });
 
 process.on("unhandledRejection", (reason, promise) => {
     console.error("❌ Promise xatoligi (unhandledRejection):", reason);
+    process.exit(1);
 });
+
 const http = require('http');
 const connectDB = require('./utils/connectDB');
 const bot = require('./bot');

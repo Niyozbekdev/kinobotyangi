@@ -16,6 +16,7 @@ bot.command('start', async (ctx) => {
     await handleStart(ctx);
 });
 
+
 // const userContact = require('./handlers/onText/userContact')
 // bot.on('contact', userContact);
 

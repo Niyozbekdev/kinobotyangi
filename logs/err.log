@@ -1,0 +1,27 @@
+2025-09-17T23:22:00: (node:3100) [MONGODB DRIVER] Warning: useNewUrlParser is a deprecated option: useNewUrlParser has no effect since Node.js Driver version 4.0.0 and will be removed in the next major version
+(Use `node --trace-warnings ...` to show where the warning was created)
+2025-09-17T23:22:00: (node:3100) [MONGODB DRIVER] Warning: useUnifiedTopology is a deprecated option: useUnifiedTopology has no effect since Node.js Driver version 4.0.0 and will be removed in the next major version
+Error: bind EADDRINUSE null:3150
+    at listenOnPrimaryHandle (node:net:2020:18)
+    at shared (node:internal/cluster/child:157:3)
+    at Worker.<anonymous> (node:internal/cluster/child:110:7)
+    at process.onInternalMessage (node:internal/cluster/utils:49:5)
+    at process.emit (node:events:530:35)
+    at emit (node:internal/child_process:949:14)
+    at process.processTicksAndRejections (node:internal/process/task_queues:91:21)
+2025-09-17T23:22:00: ❌ Kutilmagan xatolik (uncaughtException): bind EADDRINUSE null:3150
+Error: testbot
+    at Object.<anonymous> (C:\Users\niyoz\Рабочий стол\kinobotyangi\kinobotyangi\bot.js:19:7)
+    at Module._compile (node:internal/modules/cjs/loader:1730:14)
+    at Object..js (node:internal/modules/cjs/loader:1895:10)
+    at Module.load (node:internal/modules/cjs/loader:1465:32)
+    at Function._load (node:internal/modules/cjs/loader:1282:12)
+    at TracingChannel.traceSync (node:diagnostics_channel:322:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:235:24)
+    at Module.<anonymous> (node:internal/modules/cjs/loader:1487:12)
+    at Hook._require.Module.require (C:\Users\niyoz\AppData\Roaming\npm\node_modules\pm2\node_modules\require-in-the-middle\index.js:101:39)
+    at require (node:internal/modules/helpers:135:16)
+2025-09-18T00:14:08: ❌ Kutilmagan xatolik (uncaughtException): testbot
+2025-09-18T00:19:09: (node:5884) [MONGODB DRIVER] Warning: useNewUrlParser is a deprecated option: useNewUrlParser has no effect since Node.js Driver version 4.0.0 and will be removed in the next major version
+(Use `node --trace-warnings ...` to show where the warning was created)
+2025-09-18T00:19:09: (node:5884) [MONGODB DRIVER] Warning: useUnifiedTopology is a deprecated option: useUnifiedTopology has no effect since Node.js Driver version 4.0.0 and will be removed in the next major version
