@@ -7,6 +7,7 @@ module.exports = (bot) => {
         const checkKanalar = require('./checkKanalar');
         const saveChannelInvite = require('./saveChanelInvate')
         const deleteChannel = require('./deleteChannel');
+        const deleteVipPost = require('./deleteVipPost')
         const xabarniYuborish = require('./xabarniYuborish');
         const brAddBtn = require('./brAddBtn');
         const brNotBtn = require('./brNotBtn');
@@ -23,7 +24,8 @@ module.exports = (bot) => {
         bot.action('br_send', xabarniYuborish);
         bot.action('vip_save', saveVipPost);
         bot.action('vip_cancel', cancelVipPost);
-        bot.action('ochir_video_manzil', deleteManzil)
+        bot.action('ochir_video_manzil', deleteManzil);
+        bot.action('vip_delete', deleteVipPost)
         bot.action(/delete_channel_\d+/, deleteChannel)
 
 

@@ -5,7 +5,7 @@ const boshMenyu = () => {
     try {
         return Markup.keyboard([
             ['🎬 Kino topish', '🎥 Video yuborish'],// '📞 Bog‘lanish'],
-            [`💸 VIP KANALGA QOSHILISH 💸`]
+            [`👑 VIP KANALGA QOSHILISH 👑`]
         ]).resize();
     } catch (err) {
         console.error("Mainkeyboarda", err)

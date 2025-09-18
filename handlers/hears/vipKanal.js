@@ -9,7 +9,7 @@ const vipKanal = async (ctx) => {
         const post = await VipPost.findOne({ is_active: true }).sort({ createdAt: -1 });
 
         if (!post) {
-            return ctx.reply("❌ Hozircha VIP post mavjud emas.");
+            return ctx.reply("😔 Hozircha VIP kanalga qushilish mavjud emas.");
         }
 
         // Agar 1 tadan ko‘p rasm bo‘lsa → mediaGroup qilib yuboramiz
@@ -19,12 +19,15 @@ const vipKanal = async (ctx) => {
                     type: "photo",
                     media: img.file_id,
                     caption: idx === 0 && img.caption ? img.caption : undefined
-                }))
+                })),
+                { protect_content: true, } //Bu userga borgan barcha rasmlarni saqlab olishni cheklaydi
             );
         } else {
             // Bitta rasm bo‘lsa → caption bilan yuboramiz
             const first = post.images[0];
             await ctx.replyWithPhoto(first.file_id, {
+                protect_content: true,
+                supports_streaming: true,
                 caption: first.caption || ""
             });
         }

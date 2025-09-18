@@ -14,7 +14,7 @@ const userText = async (ctx) => {
         }
 
         // === VIP KANAL uchun istisno ===
-        if (ctx.message && ctx.message.text === `💸 VIP KANALGA QOSHILISH 💸`) {
+        if (ctx.message && ctx.message.text === `👑 VIP KANALGA QOSHILISH 👑`) {
             // bu yerda VIP kanal funksiyasini chaqirasiz
             return vipKanal(ctx);
         }

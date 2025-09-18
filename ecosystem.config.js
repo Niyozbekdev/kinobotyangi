@@ -9,7 +9,7 @@ module.exports = {
         {
             name: "telegram-bot",            // 🔹 PM2 da chiqadigan bot nomi
             script: "./index.js",            // 🔹 Asosiy bot fayli
-            instances: 1,                    // 🔹 Nechta instance ishga tushishi (1 ta kifoya, keyin cluster qilsa bo'ladi)
+            instances: "max",                    // 🔹 Nechta instance ishga tushishi (1 ta kifoya, keyin cluster qilsa bo'ladi)
             autorestart: true,               // 🔹 Crash bo‘lsa yoki chiqib ketsa avtomatik qayta ishga tushadi
             watch: false,                    // 🔹 Kodni kuzatish (dev muhitida true, productionda false)
             max_memory_restart: "300M",      // 🔹 300 MB dan oshsa qayta ishga tushadi
