@@ -11,7 +11,7 @@ const AdminState = require('../../models/AdminState');
 const VipAdminState = require('../../models/VipAdminSchema');
 const VideoQabulState = require('../../models/VideoQabulState');
 const videoManzilSaqlash = require('../admin/videoManzilSaqlash');
-const { handleVipPhoto } = require('../../commands/saveImage')
+const { handleVipPhoto, handleVipCaption } = require('../../commands/saveImage');
 
 const adminText = async (ctx) => {
     try {
@@ -65,6 +65,11 @@ const adminText = async (ctx) => {
 
         if (msg.photo && vippost?.step === 'vip_post') {
             return await handleVipPhoto(ctx)
+        }
+
+        // --- VIP caption yozilishi ---
+        if (msg.text && vippost?.step === 'awaiting_vip_caption') {
+            return await handleVipCaption(ctx); // ✅ faqat caption holati uchun
         }
 
 

@@ -1,5 +1,6 @@
 const VipPost = require('../../models/VipPost'); // ✅ VipPost modelini import qilamiz
 const { Markup } = require('telegraf');
+const { ADMIN_ID } = require('../../config/admin');
 
 /**
  * 📤 Admin "VIP postlarni ko‘rish/o‘chirish" tugmasini bosganda
@@ -9,6 +10,7 @@ const { Markup } = require('telegraf');
  */
 const addDeleteVip = async (ctx) => {
     try {
+        if (!ADMIN_ID.includes(ctx.from.id)) return;
         const adminId = ctx.from.id;
 
         // 🔹 Shu admin yaratgan barcha aktiv VIP postlarni olish

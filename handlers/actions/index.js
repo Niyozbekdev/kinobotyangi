@@ -12,6 +12,9 @@ module.exports = (bot) => {
         const brAddBtn = require('./brAddBtn');
         const brNotBtn = require('./brNotBtn');
         const deleteManzil = require('./mazilOchrish');
+        const KinolarWithVideos = require('./KinolarWithVideos');
+        const blockAllKinolar = require('./blockAllKinolar');
+        const restoreAllKinolar = require('./restoreAllKinolar');
         const { saveVipPost, cancelVipPost } = require('../../commands/saveImage')
 
         bot.action('delete_msg', deleteMsg);
@@ -26,7 +29,24 @@ module.exports = (bot) => {
         bot.action('vip_cancel', cancelVipPost);
         bot.action('ochir_video_manzil', deleteManzil);
         bot.action('vip_delete', deleteVipPost)
-        bot.action(/delete_channel_\d+/, deleteChannel)
+        bot.action('kinolar_bloklash', blockAllKinolar);
+        bot.action('kinolar_tiklash', restoreAllKinolar);
+        bot.action(/delete_channel_\d+/, deleteChannel);
+        bot.action('kinolar_videolar', async (ctx) => {
+            await ctx.answerCbQuery();
+            // 🧹 Birinchi chaqiriqda sessiyani tozalaymiz
+            if (!ctx.session) ctx.session = {};
+            ctx.session.lastMessages = [];
+            ctx.session.navMessageId = null;
+            await KinolarWithVideos(ctx, 1, false);
+        });
+
+        bot.action(/kinolar_page_(\d+)/, async (ctx) => {
+            await ctx.answerCbQuery();
+            const page = parseInt(ctx.match[1], 10);
+            await KinolarWithVideos(ctx, page, true);
+        });
+
 
 
         // Yana boshqa action'larni bu yerga qo‘shishingiz mumkin:

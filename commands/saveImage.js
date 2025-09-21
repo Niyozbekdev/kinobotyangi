@@ -1,5 +1,8 @@
 const VipAdminState = require('../models/VipAdminSchema');   // ✅ faqat VIP uchun state
 const VipPost = require('../models/VipPost');               // ✅ saqlanadigan post modeli
+const AdminState = require('../models/AdminState');
+const videoManzilState = require('../models/VideoQabulState');
+const { ADMIN_ID } = require('../config/admin');
 const { Markup } = require('telegraf');
 
 const MAX_IMAGES = 10;
@@ -20,7 +23,11 @@ const MAX_CAPTION_LENGTH = 1024;
  */
 async function startVipPost(ctx) {
     try {
+        if (!ADMIN_ID.includes(ctx.from.id)) return;
         const adminId = ctx.from.id;
+
+        await AdminState.deleteOne({ admin_id: adminId })
+        await videoManzilState.deleteOne({ admin_id: adminId })
 
         // State yangilash yoki yaratish
         await VipAdminState.findOneAndUpdate(
@@ -89,12 +96,12 @@ const handleVipPhoto = async (ctx) => {
         const mediaGroupId = ctx.message.media_group_id;
 
         // 🔎 Caption uzunligini tekshiramiz
-        if (caption.length > MAX_CAPTION_LENGTH) {
-            await ctx.reply(
-                `⚠️ Caption juda uzun(${caption.length} belgi).\nIltimos, ${MAX_CAPTION_LENGTH} belgidan kamroq matn yozing.`
-            );
-            return; // saqlamaymiz
-        }
+        // if (caption.length > MAX_CAPTION_LENGTH) {
+        //     await ctx.reply(
+        //         `⚠️ Caption juda uzun(${caption.length} belgi).\nIltimos, ${MAX_CAPTION_LENGTH} belgidan kamroq matn yozing.`
+        //     );
+        //     return; // saqlamaymiz
+        // }
 
 
         //let state = await VipAdminState.findOne({ admin_id: userId });
@@ -104,61 +111,52 @@ const handleVipPhoto = async (ctx) => {
         // === Albom (media_group) holati ===
         if (mediaGroupId) {
             if (!mediaGroupsCache[mediaGroupId]) {
-                mediaGroupsCache[mediaGroupId] = { images: [], caption, ctx, userId, timer: null };
+                mediaGroupsCache[mediaGroupId] = { images: [], ctx, userId, timer: null };
             }
 
-            mediaGroupsCache[mediaGroupId].images.push({ file_id: fileId, caption });
+            mediaGroupsCache[mediaGroupId].images.push({ file_id: fileId });
 
             if (!mediaGroupsCache[mediaGroupId].timer) {
-                // 1.5 soniyadan keyin albom to‘liq yig‘ilib preview chiqariladi
+                // 1.5s kutib, albom tugagach preview qilamiz
                 mediaGroupsCache[mediaGroupId].timer = setTimeout(async () => {
                     try {
-                        const { images, caption, ctx, userId } = mediaGroupsCache[mediaGroupId];
+                        const { images } = mediaGroupsCache[mediaGroupId];
 
                         if (images.length > MAX_IMAGES) {
-                            await ctx.reply('❌ Maksimal 10 ta rasm yuklashingiz mumkin.');
+                            await ctx.reply('❌ Maksimal 10 ta rasm yuborishingiz mumkin.');
                             delete mediaGroupsCache[mediaGroupId];
                             return;
                         }
 
-                        // Oldingi preview’larni o‘chirish
+                        // Eski previewlarni o‘chirish
                         if (state.last_preview_msg_ids?.length) {
                             for (let msgId of state.last_preview_msg_ids) {
                                 try { await ctx.deleteMessage(msgId); } catch (_) { }
                             }
                         }
 
-                        // Preview yuborish
+                        // Preview yuborish (caption hozircha yo‘q)
                         const sentMessages = await ctx.replyWithMediaGroup(
-                            images.map((img, idx) => ({
+                            images.map(img => ({
                                 type: 'photo',
-                                media: img.file_id,
-                                caption: idx === 0 ? caption : undefined
-                            }))
+                                media: img.file_id
+                            })),
                         );
 
-                        await ctx.reply(`👀 Foydalanuvchilarga 👆 shunaqa tarzda ko'rinadi.`)
-                        const actionMessage = await ctx.reply(
-                            '✅ Agar tayyor bo‘lsa, VIP postni saqlang yoki bekor qiling.',
-                            Markup.inlineKeyboard([
-                                [Markup.button.callback('💾 Saqlash', 'vip_save')],
-                                [Markup.button.callback('❌ Bekor qilish', 'vip_cancel')]
-                            ])
-                        );
+                        // Admin’dan caption so‘raymiz
+                        const askCaptionMsg = await ctx.reply("✍️ Iltimos, VIP post uchun caption yuboring:");
 
-                        // State yangilash
+                        // State yangilash: rasmlar saqlanadi, caption keyin qo‘shiladi
                         await VipAdminState.updateOne(
                             { admin_id: userId },
                             {
                                 $set: {
-                                    vip_post: images.map((img, idx) => ({
-                                        file_id: img.file_id,
-                                        caption: idx === 0 ? caption : ''
-                                    })),
+                                    vip_post: images, // faqat rasmlar, captionsiz
                                     last_preview_msg_ids: [
                                         ...sentMessages.map(m => m.message_id),
-                                        actionMessage.message_id
+                                        askCaptionMsg.message_id
                                     ],
+                                    step: 'awaiting_vip_caption',
                                     updated_at: new Date()
                                 }
                             }
@@ -172,7 +170,6 @@ const handleVipPhoto = async (ctx) => {
                     }
                 }, 1500);
             }
-
             // === Bitta rasm holati ===
         } else {
             if (state.last_preview_msg_ids?.length) {
@@ -207,6 +204,57 @@ const handleVipPhoto = async (ctx) => {
     } catch (err) {
         console.error('handleVipPhoto error:', err);
         await ctx.reply('❌ Rasmni qayta yuboring. Xatolik yuz berdi.');
+    }
+};
+
+const handleVipCaption = async (ctx) => {
+    try {
+        const adminId = ctx.from.id;
+        const text = ctx.text;
+
+        // Adminning state sini olish
+        const state = await VipAdminState.findOne({ admin_id: adminId });
+
+        // Agar caption kutilayotgan holatda bo‘lmasa, qaytamiz
+        if (!state || state.step !== 'awaiting_vip_caption') return;
+
+        // Faqat birinchi rasmga caption qo‘shamiz
+        const updatedImages = state.vip_post.map((img, idx) => ({
+            file_id: img.file_id,
+            caption: idx === 0 ? text : '' // faqat birinchisiga caption
+        }));
+
+        // State yangilash
+        await VipAdminState.updateOne(
+            { admin_id: adminId },
+            {
+                $set: {
+                    vip_post: updatedImages,
+                    step: 'vip_post',
+                    updated_at: new Date()
+                }
+            }
+        );
+        //Preview yuborish (caption hozircha yo‘q)
+        await ctx.replyWithMediaGroup(
+            updatedImages.map((img, idx) => ({
+                type: "photo",
+                media: img.file_id,
+                caption: idx === 0 && img.caption ? img.caption : undefined // faqat 1-rasmga caption
+            }))
+        );
+
+        // ✅ Tugmalar chiqaramiz
+        await ctx.reply(
+            '✅ VIP post tayyor. Saqlashni xohlaysizmi?',
+            Markup.inlineKeyboard([
+                [Markup.button.callback('💾 Saqlash', 'vip_save')],
+                [Markup.button.callback('❌ Bekor qilish', 'vip_cancel')]
+            ])
+        );
+    } catch (err) {
+        console.error('handleVipCaption error:', err);
+        await ctx.reply('❌ Caption saqlashda xatolik yuz berdi.');
     }
 };
 
@@ -251,9 +299,6 @@ async function saveVipPost(ctx) {
 /**
  * ❌ Bekor tugmasi
  */
-/**
- * ❌ Bekor tugmasi
- */
 async function cancelVipPost(ctx) {
     try {
         const adminId = ctx.from.id;
@@ -289,4 +334,4 @@ async function cancelVipPost(ctx) {
     }
 }
 
-module.exports = { startVipPost, handleVipPhoto, saveVipPost, cancelVipPost };
+module.exports = { startVipPost, handleVipPhoto, saveVipPost, cancelVipPost, handleVipCaption };

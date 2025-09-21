@@ -1,6 +1,8 @@
-const { Telegraf } = require("telegraf");
+const { Telegraf, session } = require("telegraf");
 const { BOT_TOKEN } = require('./config/admin');
 const bot = new Telegraf(BOT_TOKEN);
+
+bot.use(session());
 //Botdagi xatolikni ushlaydi barchasini
 bot.catch((err, ctx) => {
     console.error("Botda xatolik", err);
@@ -30,6 +32,7 @@ const onVideoYuborish = require('./handlers/hears/videoYuborishStart');
 const vipKanal = require('./handlers/hears/vipKanal');
 //const virtualKeks = require('./handlers/hears/virtualKeks');
 const userFile = require('./handlers/admin/exportUser');
+const kinoLar = require('./handlers/admin/kinoLar')
 const adminPanel = require('./handlers/admin/adminPanel');
 const addKinoStart = require('./handlers/admin/addKinoStart');
 const deleteKinoStart = require('./handlers/admin/deleteKinoStart')
@@ -61,6 +64,7 @@ bot.hears('💾 Video qabul qilish', videoManzilSoraladi);
 bot.hears('📀 Manzil', videoManzilKorsatish);
 bot.hears('📊 Statistika', addStatistika);
 bot.hears('💾 Userlarni olish', userFile);
+bot.hears('🎬 Kinolar', kinoLar)
 bot.hears('📷 VipPost saqlash', startVipPost);
 bot.hears('🗑 VipPost o‘chirish', VipPostdelete)
 bot.hears('👤 Foydalanuvchini o‘chirish', addDeleteUser);

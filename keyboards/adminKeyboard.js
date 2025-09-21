@@ -9,7 +9,7 @@ const adminKeyboard = () => {
             ['📢 Xabar yuborish', '📊 Statistika'],
             ['💾 Video qabul qilish', '📀 Manzil'],
             ['📷 VipPost saqlash', '🗑 VipPost o‘chirish'],
-            ['💾 Userlarni olish', '🧼 Xabarlarni tozalash'],
+            ['💾 Userlarni olish', '🎬 Kinolar'],
             ['👤 Foydalanuvchini o‘chirish'],
             ['⬅️ Orqaga']
         ]).resize()

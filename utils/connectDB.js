@@ -8,7 +8,7 @@ async function connectDB() {
             useNewUrlParser: true,
             useUnifiedTopology: true
         });
-        console.log('✅ MongoDB ulandi');
+        console.log(`✅ MongoDB ulandi | PID ${process.pid}`);
     } catch (err) {
         console.error('❌ MongoDB ulanishda xatolik:', err);
         process.exit(1);

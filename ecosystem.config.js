@@ -8,7 +8,8 @@ module.exports = {
     apps: [
         {
             name: "telegram-bot",            // 🔹 PM2 da chiqadigan bot nomi
-            script: "./index.js",            // 🔹 Asosiy bot fayli
+            script: "./index.js",
+            //exec_mode: "cluster",          // 🔹 Asosiy bot fayli
             instances: "max",                    // 🔹 Nechta instance ishga tushishi (1 ta kifoya, keyin cluster qilsa bo'ladi)
             autorestart: true,               // 🔹 Crash bo‘lsa yoki chiqib ketsa avtomatik qayta ishga tushadi
             watch: false,                    // 🔹 Kodni kuzatish (dev muhitida true, productionda false)

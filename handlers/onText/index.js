@@ -37,6 +37,7 @@ const onText = async (ctx) => {
             return await videoManzilSaqlash(ctx)
         }
 
+
         if (isAdmin || adminState) {
             return await adminText(ctx); // video, title, code...
         }
