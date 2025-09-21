@@ -1,99 +1,111 @@
 // commands/kinoTopish.js
-const Kino = require('../../models/Kino'); // Kino modelini import qilish
-const checkKanalar = require('../actions/checkKanalar');
-const User = require('../../models/User');
-const vipKanal = require('../../handlers/hears/vipKanal');
 
+const Kino = require('../../models/Kino');          // 🎬 Kino modelini import qilish
+const checkKanalar = require('../actions/checkKanalar');
+const User = require('../../models/User');          // 👥 User modeli
+const vipKanal = require('../../handlers/hears/vipKanal'); // VIP kanal funksiyasi
+
+/**
+ * User text handler
+ * - User bazada saqlanadi yoki yangilanadi
+ * - VIP kanal istisnosi
+ * - Kino kodini tekshirish va yuborish
+ */
 const userText = async (ctx) => {
     try {
         const userId = ctx.from.id;
-        const user = await User.findOne({ user_id: userId });
 
+        // 🔄 Userni bazaga saqlash yoki yangilash
+        await User.findOneAndUpdate(
+            { user_id: userId }, // qaysi userni yangilash
+            {
+                user_id: userId,
+                username: ctx.from.username || "",
+                first_name: ctx.from.first_name || "",
+                last_name: ctx.from.last_name || "",
+                last_active_at: new Date() // ✅ oxirgi aktiv vaqt
+            },
+            { upsert: true, new: true } // mavjud bo‘lmasa yaratiladi
+        );
+
+        const user = await User.findOne({ user_id: userId });
         if (!user) {
-            return ctx.reply(`Siz bazada yuqsiz xizmat ko'rsatilmaydi`)
+            return ctx.reply("❌ Siz bazada yo‘qsiz, xizmat ko‘rsatilmaydi");
         }
 
         // === VIP KANAL uchun istisno ===
-        if (ctx.message && ctx.message.text === `👑 VIP KANALGA QOSHILISH 👑`) {
-            // bu yerda VIP kanal funksiyasini chaqirasiz
+        if (ctx.message && ctx.message.text === "👑 VIP KANALGA QOSHILISH 👑") {
             return vipKanal(ctx);
         }
 
+        // 🔐 Kanallar tekshiruvi
         const tekshirKanal = await checkKanalar(ctx);
         if (!tekshirKanal) return;
 
-        // === Asosiy tekshiruv: kinoTopish tugmasi bosilganmi yoki yo‘q ===
+        // === Asosiy tekshiruv: user step bor yoki yo‘q ===
         if (!user.step) {
-            return ctx.reply("❗️Iltimos, avval *Kino topish* tugmasini bosing yoki /kino komandasini yozing.", {
-                parse_mode: 'Markdown'
-            });
+            return ctx.reply(
+                "❗️Iltimos, avval *Kino topish* tugmasini bosing yoki /kino komandasini yozing.",
+                { parse_mode: "Markdown" }
+            );
         }
 
-        if (user && user.step === "waiting_for_codd") {
-
-            // Faqat matnli xabarlar bilan ishlash
+        // === Agar user kino kodi yuborayotgan bo‘lsa ===
+        if (user.step === "waiting_for_codd") {
+            // ❗️Faqat matnli xabarlarni qabul qilish
             if (!ctx.message || typeof ctx.message.text !== "string") {
-                return ctx.reply("xatos"); // Foydalanuvchi tugma bosgan yoki boshqa narsa yuborgan
+                return ctx.reply("❎ Kodni yuboring (tugma emas)");
             }
-            //Bu filim kodini oladi foydalanuvchidan
+
             const kod = ctx.message.text.trim();
 
-            //Bu kodni formatlaydi kod soraganda user tugma bosa xabar jo'natmaydi
+            // 🔢 Kodni tekshirish (faqat harf/raqam)
             const isValidCode = /^[A-Za-z0-9]{1,}$/.test(kod);
             if (!isValidCode) {
-                return ctx.reply(`❎ Kodni yuboring`); // noto‘g‘ri matn, ehtimol tugma bosilgan
+                return ctx.reply("❎ Kodni to‘g‘ri yuboring!");
             }
 
+            // 🔎 Kino bazadan topiladi
             const kino = await Kino.findOne({ code: kod, is_deleted: false });
-
             if (!kino) {
-                return ctx.reply('❌ Bunday kodli kino topilmadi.');
+                return ctx.reply("❌ Bunday kodli kino topilmadi.");
             }
-            //Bu kino nomini qanday belgilardan iborat bulsa ham yuborishni taminlaydi
-            const escapeMarkdownV2 = (text) => {
-                return text.replace(/([_*\[\]()~`>#+\-=|{}.!\\])/g, '\\$1');
-            };
-            // ishlatish:
-            const safeTitle = escapeMarkdownV2(kino.title);
+
+            // 👁 Ko‘rishlar sonini oshirish
             kino.views += 1;
             await kino.save();
 
-            // const randomBetween = (min, max) => {
-            //     return Math.floor(Math.random() * (max - min + 1)) + min;
-            // };
-            // const downloads = randomBetween(500, 5000)
-            // const viewsa = downloads + randomBetween(1000, 9999);
-
-            //⬇️Yuklashlar: ${downloads}
             try {
-                await ctx.replyWithVideo(kino.file_id, { // bu yerga haqiqiy file_id kiriting
-                    caption: `👤Siz uchun tayyor.\n\n👁Ko'rishlar: ${kino.views}\n🤖 Bizning bot: @KinoManyaUz_bot`,
-                    parse_mode: 'HTML', // oddiy format (MarkdownV2 emas!)
+                // 🎥 Kino yuborish
+                await ctx.replyWithVideo(kino.file_id, {
+                    caption: `
+👤 Siz uchun tayyor.
+👁 Ko‘rishlar: ${kino.views}
+🤖 Bizning bot: @KinoManyaUz_bot
+                    `,
+                    parse_mode: "HTML",
                     protect_content: true,
                     supports_streaming: true,
                     reply_markup: {
                         inline_keyboard: [
-                            [{ text: '📤 Ulashish', switch_inline_query: `Kod: ${kino.code}` }],
-                            [{ text: '❌ O‘chirish', callback_data: 'delete_msg' }]
+                            [{ text: "📤 Ulashish", switch_inline_query: `Kod: ${kino.code}` }],
+                            [{ text: "❌ O‘chirish", callback_data: "delete_msg" }]
                         ]
                     }
                 });
 
-                //Bu foydalanuvchi videoni olgandan so'ng userStateni tozalaydi
-                // await User.updateOne({ user_id: userId });
+                // ✅ User step reset qilinadi
                 user.step = null;
                 await user.save();
 
             } catch (err) {
-                console.error('Video yuborishda xato', + err);
-                ctx.reply('Video yuborishda muoma yuz berdi')
+                console.error("❌ Video yuborishda xato:", err);
+                ctx.reply("⚠️ Video yuborishda muammo yuz berdi.");
             }
         }
-
     } catch (err) {
-        console.error("Usertextda", err)
+        console.error("❌ userText ichida xato:", err);
     }
 };
-
 
 module.exports = userText;
